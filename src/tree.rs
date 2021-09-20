@@ -192,7 +192,7 @@ impl<T: NodeContent> Forest<T> {
     /// 
     /// * An [`Option`] with the mut tree reference.
     /// 
-    pub fn get_mut_tree(&mut self, name: &str) -> Option<&Tree<T>> {
+    pub fn get_mut_tree(&mut self, name: &str) -> Option<&mut Tree<T>> {
         if let Some(t) = self.trees.get_mut(name) {
             Some(t)
         }
