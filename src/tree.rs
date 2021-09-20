@@ -1,0 +1,141 @@
+use std::collections::HashMap as Map;
+
+// Structs //
+
+/// Trait to define structs that model a node content.
+pub trait NodeContent {
+    /// Constructor.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `content` - Node content.
+    /// 
+    /// # Return
+    /// 
+    /// * An [`Option`] with the node content.
+    /// 
+    fn new(content: &str) -> Option<Self> where Self: Sized;
+    /// Get node content.
+    /// 
+    /// # Return
+    /// 
+    /// * Node content.
+    ///
+    fn get_content(&self) -> &str;
+}
+
+/// Default [`NodeContent`] struct.
+/// 
+/// It simply holds the content as is, without parsing or modifying it.
+#[derive(Debug)]
+pub struct RawNode {
+    /// Node content.
+    content: String
+}
+
+impl NodeContent for RawNode {
+    fn new(content: &str) -> Option<Self> {
+        Some(
+            Self {
+                content: String::from(content)
+            }
+        )
+    }
+
+    fn get_content(&self) -> &str {
+        &self.content
+    }
+}
+
+/// Struct that contains a tree node.
+#[derive(Debug)]
+pub struct Node<T: NodeContent> {
+    /// Node content.
+    pub content: T,
+    /// Nodel level.
+    pub level: usize,
+    /// Parent node index in the tree array.
+    pub parent_position: Option<usize>,
+    // Map of content/node index, to find a child by name.
+    pub child_map: Map<String, usize>,
+    /// Index of current node in the parent [`children`][`Node::children`] array.
+    pub parents_children_pos: Option<usize>,
+    /// Array that contains indexes of of children nodes.
+    pub children: Vec<usize>
+}
+
+/// Struct that contains tree levels information.
+#[derive(Debug)]
+pub struct TreeLevel {
+    /// Tree level.
+    pub level: usize,
+    /// Nodes of the tree level. Positions within the [`Tree`] structure.
+    pub node_positions: Vec<usize>
+}
+
+/// Struct that contains a tree.
+#[derive(Debug)]
+pub struct Tree<T: NodeContent> {
+    /// Tree nodes.
+    pub nodes: Vec<Node<T>>,
+    /// Tree levels.
+    pub levels: Vec<TreeLevel>
+}
+
+/// Contains the interfaces to parse, generate, modify and serialize TREF models.
+#[derive(Debug)]
+pub struct Forest<T: NodeContent> {
+    /// Map with all the trees contained in the Forest.
+    pub trees: Map<String, Tree<T>>
+}
+
+// Implementations //
+
+impl<T: NodeContent> Tree<T> {
+    pub fn new() -> Self {
+        Self {
+            nodes: vec!(),
+            levels: vec!()
+        }
+    }
+
+    pub fn set_root(&mut self, node_content: &str) -> Option<usize> {
+        if let Some(n) = Node::<T>::new_root(node_content) {
+            if self.nodes.len() == 0 {
+                self.nodes.push(n);
+            }
+            else {
+                let current_root = self.nodes.get_mut(0).unwrap();
+                current_root.content = n.content;
+            }
+            Some(0)
+        }
+        else {
+            None
+        }
+    }
+
+    //TODO: link_node, unlink_node
+}
+
+impl<T: NodeContent> Node<T> {
+    pub fn new_root(content: &str) -> Option<Self> {
+        if let Some(content_node) = NodeContent::new(content) {
+            Some(
+                Node {
+                    content: content_node,
+                    level: 1,
+                    parent_position: None,
+                    child_map: Map::new(),
+                    parents_children_pos: None,
+                    children: vec!()
+                }
+            )
+        }
+        else {
+            None
+        }
+    }
+
+    //TODO: new node
+}
