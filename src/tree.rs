@@ -1,6 +1,6 @@
 use std::collections::HashMap as Map;
 
-// Structs //
+//---- Structs ----//
 
 /// Trait to define structs that model a node content.
 pub trait NodeContent {
@@ -82,14 +82,14 @@ pub struct Tree<T: NodeContent> {
     pub levels: Vec<TreeLevel>
 }
 
-/// Contains the interfaces to parse, generate, modify and serialize TREF models.
+/// A forest is a set of trees.
 #[derive(Debug)]
 pub struct Forest<T: NodeContent> {
     /// Map with all the trees contained in the Forest.
     pub trees: Map<String, Tree<T>>
 }
 
-// Implementations //
+//---- Implementations ----//
 
 impl<T: NodeContent> Tree<T> {
     pub fn new() -> Self {
@@ -103,6 +103,10 @@ impl<T: NodeContent> Tree<T> {
         if let Some(n) = Node::<T>::new_root(node_content) {
             if self.nodes.len() == 0 {
                 self.nodes.push(n);
+                self.levels.push(TreeLevel {
+                    level: 1,
+                    node_positions: vec!(0)
+                });
             }
             else {
                 let current_root = self.nodes.get_mut(0).unwrap();
