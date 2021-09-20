@@ -139,3 +139,65 @@ impl<T: NodeContent> Node<T> {
 
     //TODO: new node
 }
+
+impl<T: NodeContent> Forest<T> {
+    /// Create an empty forest.
+    pub fn new() -> Self {
+        Self {
+            trees: Map::new()
+        }
+    }
+
+    /// Add a tree to forest.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `name` - Tree name.
+    /// * `forest` - Tree struct.
+    /// 
+    /// # Return
+    /// 
+    /// * Nothing.
+    /// 
+    pub fn add_tree(&mut self, name: &str, tree: Tree<T>) {
+        self.trees.insert(String::from(name), tree);
+    }
+
+    /// Get tree reference.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `name` - Tree name.
+    /// 
+    /// # Return
+    /// 
+    /// * An [`Option`] with the tree reference.
+    /// 
+    pub fn get_tree(&self, name: &str) -> Option<&Tree<T>> {
+        if let Some(t) = self.trees.get(name) {
+            Some(t)
+        }
+        else {
+            None
+        }
+    }
+
+    /// Get mutable tree reference.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `name` - Tree name.
+    /// 
+    /// # Return
+    /// 
+    /// * An [`Option`] with the mut tree reference.
+    /// 
+    pub fn get_mut_tree(&mut self, name: &str) -> Option<&Tree<T>> {
+        if let Some(t) = self.trees.get_mut(name) {
+            Some(t)
+        }
+        else {
+            None
+        }
+    }
+}
