@@ -69,7 +69,7 @@ pub struct Node<T: NodeContent> {
 pub struct TreeLevel {
     /// Tree level.
     pub level: usize,
-    /// Nodes of the tree level. Positions within the [`Tree`] structure.
+    /// Nodes of the tree level. Positions within the [`nodes`][`Tree::nodes`] array.
     pub node_positions: Vec<usize>
 }
 
@@ -119,7 +119,10 @@ impl<T: NodeContent> Tree<T> {
         }
     }
 
-    //TODO: link_node, unlink_node
+    //TODO: link_node
+    //TODO: set_node (overwrite content, it must exist)
+    //TODO: unlink_node (careful with levels!)
+    //TODO: find_node (use `Node::child_map`)
 }
 
 impl<T: NodeContent> Node<T> {
@@ -141,7 +144,7 @@ impl<T: NodeContent> Node<T> {
         }
     }
 
-    //TODO: new node
+    //TODO: new_node
 }
 
 impl<T: NodeContent> Forest<T> {
@@ -166,6 +169,8 @@ impl<T: NodeContent> Forest<T> {
     pub fn add_tree(&mut self, name: &str, tree: Tree<T>) {
         self.trees.insert(String::from(name), tree);
     }
+
+    //TODO: remove_tree
 
     /// Get tree reference.
     /// 
