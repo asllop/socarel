@@ -125,7 +125,7 @@ impl<T: NodeContent> Node<T> {
         self.content = content;
     }
 
-    /// Get content.
+    /// Get content. Move self.
     /// 
     /// # Return
     /// 
@@ -133,6 +133,16 @@ impl<T: NodeContent> Node<T> {
     ///
     pub fn get_content(self) -> T {
         self.content
+    }
+
+    /// Get content reference.
+    /// 
+    /// # Return
+    /// 
+    /// * Node content reference.
+    ///
+    pub fn get_content_ref(&self) -> &T {
+        &self.content
     }
 
     /// Set level.

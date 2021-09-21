@@ -10,5 +10,6 @@ fn main() {
         let _child = my_tree.link_node("child node", _root).unwrap();
         println!("Child index = {}", _child);
         println!("My Tree = {:#?}", my_tree);
+        println!("Root node content = {:#?}", my_tree.get_node_content(0).unwrap().get_val());
     }
 }
