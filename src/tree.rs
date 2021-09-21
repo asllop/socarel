@@ -1,68 +1,7 @@
 use std::collections::HashMap as Map;
+use crate::node::*;
 
 //---- Structs ----//
-
-/// Trait to define structs that model a node content.
-pub trait NodeContent {
-    /// Constructor.
-    /// 
-    /// # Aeguments
-    /// 
-    /// * `content` - Node content.
-    /// 
-    /// # Return
-    /// 
-    /// * An [`Option`] with the node content.
-    /// 
-    fn new(content: &str) -> Option<Self> where Self: Sized;
-    /// Get node content.
-    /// 
-    /// # Return
-    /// 
-    /// * Node content.
-    ///
-    fn get_content(&self) -> &str;
-}
-
-/// Default [`NodeContent`] struct.
-/// 
-/// It simply holds the content as is, without parsing or modifying it.
-#[derive(Debug)]
-pub struct RawNode {
-    /// Node content.
-    content: String
-}
-
-impl NodeContent for RawNode {
-    fn new(content: &str) -> Option<Self> {
-        Some(
-            Self {
-                content: String::from(content)
-            }
-        )
-    }
-
-    fn get_content(&self) -> &str {
-        &self.content
-    }
-}
-
-/// Struct that contains a tree node.
-#[derive(Debug)]
-pub struct Node<T: NodeContent> {
-    /// Node content.
-    content: T,
-    /// Nodel level.
-    level: usize,
-    /// Parent node index in the tree array.
-    parent_position: Option<usize>,
-    // Map of content/node index, to find a child by name.
-    child_map: Map<String, usize>,
-    /// Index of current node in the parent [`children`][`Node::children`] array.
-    parents_children_pos: Option<usize>,
-    /// Array that contains indexes of of children nodes.
-    children: Vec<usize>
-}
 
 /// Struct that contains tree levels information.
 #[derive(Debug)]
@@ -118,7 +57,7 @@ impl<T: NodeContent> Tree<T> {
             }
             else {
                 let current_root = self.nodes.get_mut(0).unwrap();
-                current_root.content = node.content;
+                current_root.set_content(node.get_content());
             }
             Some(0)
         }
@@ -140,17 +79,16 @@ impl<T: NodeContent> Tree<T> {
     ///
     pub fn link_node(&mut self, node_content: &str, parent_node_index: usize) -> Option<usize> {
         if parent_node_index < self.nodes.len() {
-            let new_node_level = self.nodes[parent_node_index].level + 1;
+            let new_node_level = self.nodes[parent_node_index].get_level() + 1;
             if let Some(mut new_node) = Node::<T>::new_node(node_content, new_node_level) {
                 // Update new node, set parent_position and parents_children_pos
-                new_node.parent_position = Some(parent_node_index);
-                let parents_children_pos = self.nodes[parent_node_index].children.len();
-                new_node.parents_children_pos = Some(parents_children_pos);
+                new_node.set_parent_position(parent_node_index);
+                let parents_children_pos = self.nodes[parent_node_index].get_num_chuildren();
+                new_node.set_parents_children_pos(parents_children_pos);
                 // Add new node to nodes array, to parent's children array and to child_map
                 let new_node_index = self.nodes.len();
                 self.nodes.push(new_node);
-                self.nodes[parent_node_index].children.push(new_node_index);
-                self.nodes[parent_node_index].child_map.insert(String::from(node_content), new_node_index);
+                self.nodes[parent_node_index].add_child(node_content, new_node_index);
                 self.add_to_level(new_node_level, new_node_index);
                 return Some(new_node_index);
             }
@@ -178,51 +116,6 @@ impl<T: NodeContent> Tree<T> {
         }
         else {
             // Error
-            None
-        }
-    }
-}
-
-impl<T: NodeContent> Node<T> {
-    /// Create new root node.
-    /// 
-    /// # Aeguments
-    /// 
-    /// * `content` - Node content.
-    /// 
-    /// # Return
-    /// 
-    /// * Node struct or None if content parsing fails.
-    /// 
-    pub fn new_root(content: &str) -> Option<Self> {
-        Self::new_node(content, 1)
-    }
-
-    /// Create new node.
-    /// 
-    /// # Aeguments
-    /// 
-    /// * `content` - Node content.
-    /// * `level` - Node level.
-    /// 
-    /// # Return
-    /// 
-    /// * Node struct or None if content parsing fails.
-    /// 
-    pub fn new_node(content: &str, level: usize) -> Option<Self> {
-        if let Some(content_node) = NodeContent::new(content) {
-            Some(
-                Node {
-                    content: content_node,
-                    level,
-                    parent_position: None,
-                    child_map: Map::new(),
-                    parents_children_pos: None,
-                    children: vec!()
-                }
-            )
-        }
-        else {
             None
         }
     }
