@@ -51,47 +51,48 @@ impl NodeContent for RawNode {
 #[derive(Debug)]
 pub struct Node<T: NodeContent> {
     /// Node content.
-    pub content: T,
+    content: T,
     /// Nodel level.
-    pub level: usize,
+    level: usize,
     /// Parent node index in the tree array.
-    pub parent_position: Option<usize>,
+    parent_position: Option<usize>,
     // Map of content/node index, to find a child by name.
-    pub child_map: Map<String, usize>,
+    child_map: Map<String, usize>,
     /// Index of current node in the parent [`children`][`Node::children`] array.
-    pub parents_children_pos: Option<usize>,
+    parents_children_pos: Option<usize>,
     /// Array that contains indexes of of children nodes.
-    pub children: Vec<usize>
+    children: Vec<usize>
 }
 
 /// Struct that contains tree levels information.
 #[derive(Debug)]
 pub struct TreeLevel {
     /// Tree level.
-    pub level: usize,
+    level: usize,
     /// Nodes of the tree level. Positions within the [`nodes`][`Tree::nodes`] array.
-    pub node_positions: Vec<usize>
+    node_positions: Vec<usize>
 }
 
 /// Struct that contains a tree.
 #[derive(Debug)]
 pub struct Tree<T: NodeContent> {
     /// Tree nodes.
-    pub nodes: Vec<Node<T>>,
+    nodes: Vec<Node<T>>,
     /// Tree levels.
-    pub levels: Vec<TreeLevel>
+    levels: Vec<TreeLevel>
 }
 
 /// A forest is a set of trees.
 #[derive(Debug)]
 pub struct Forest<T: NodeContent> {
     /// Map with all the trees contained in the Forest.
-    pub trees: Map<String, Tree<T>>
+    trees: Map<String, Tree<T>>
 }
 
 //---- Implementations ----//
 
 impl<T: NodeContent> Tree<T> {
+    /// Create new empty tree.
     pub fn new() -> Self {
         Self {
             nodes: vec!(),
@@ -99,18 +100,25 @@ impl<T: NodeContent> Tree<T> {
         }
     }
 
+    /// Set root node.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `content` - Node content.
+    /// 
+    /// # Return
+    /// 
+    /// * An [`Option`] with the root node index (always 0).
+    ///
     pub fn set_root(&mut self, node_content: &str) -> Option<usize> {
-        if let Some(n) = Node::<T>::new_root(node_content) {
+        if let Some(node) = Node::<T>::new_root(node_content) {
             if self.nodes.len() == 0 {
-                self.nodes.push(n);
-                self.levels.push(TreeLevel {
-                    level: 1,
-                    node_positions: vec!(0)
-                });
+                self.nodes.push(node);
+                self.add_to_level(1, 0);
             }
             else {
                 let current_root = self.nodes.get_mut(0).unwrap();
-                current_root.content = n.content;
+                current_root.content = node.content;
             }
             Some(0)
         }
@@ -119,19 +127,94 @@ impl<T: NodeContent> Tree<T> {
         }
     }
 
-    //TODO: link_node
+    /// Create new node and link it to its parent.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `node_content` - Node content.
+    /// * `parent_node_index` - Parent node index.
+    /// 
+    /// # Return
+    /// 
+    /// * An [`Option`] with the new node index.
+    ///
+    pub fn link_node(&mut self, node_content: &str, parent_node_index: usize) -> Option<usize> {
+        if parent_node_index < self.nodes.len() {
+            let new_node_level = self.nodes[parent_node_index].level + 1;
+            if let Some(mut new_node) = Node::<T>::new_node(node_content, new_node_level) {
+                // Update new node, set parent_position and parents_children_pos
+                new_node.parent_position = Some(parent_node_index);
+                let parents_children_pos = self.nodes[parent_node_index].children.len();
+                new_node.parents_children_pos = Some(parents_children_pos);
+                // Add new node to nodes array, to parent's children array and to child_map
+                let new_node_index = self.nodes.len();
+                self.nodes.push(new_node);
+                self.nodes[parent_node_index].children.push(new_node_index);
+                self.nodes[parent_node_index].child_map.insert(String::from(node_content), new_node_index);
+                self.add_to_level(new_node_level, new_node_index);
+                return Some(new_node_index);
+            }
+        }
+        None
+    }
+    
     //TODO: set_node (overwrite content, it must exist)
     //TODO: unlink_node (careful with levels!)
     //TODO: find_node (use `Node::child_map`)
+
+    fn add_to_level(&mut self, level: usize, node_index: usize) -> Option<usize> {
+        if level <= self.levels.len() {
+            // There is a pos for this level, add node_index
+            self.levels[level - 1].node_positions.push(node_index);
+            Some(self.levels.len())
+        }
+        else if level - 1 == self.levels.len() {
+            // No pos for this level but we can create it
+            self.levels.push(TreeLevel {
+                level,
+                node_positions: vec!(node_index)
+            });
+            Some(self.levels.len())
+        }
+        else {
+            // Error
+            None
+        }
+    }
 }
 
 impl<T: NodeContent> Node<T> {
+    /// Create new root node.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `content` - Node content.
+    /// 
+    /// # Return
+    /// 
+    /// * Node struct or None if content parsing fails.
+    /// 
     pub fn new_root(content: &str) -> Option<Self> {
+        Self::new_node(content, 1)
+    }
+
+    /// Create new node.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `content` - Node content.
+    /// * `level` - Node level.
+    /// 
+    /// # Return
+    /// 
+    /// * Node struct or None if content parsing fails.
+    /// 
+    pub fn new_node(content: &str, level: usize) -> Option<Self> {
         if let Some(content_node) = NodeContent::new(content) {
             Some(
                 Node {
                     content: content_node,
-                    level: 1,
+                    level,
                     parent_position: None,
                     child_map: Map::new(),
                     parents_children_pos: None,
@@ -143,8 +226,6 @@ impl<T: NodeContent> Node<T> {
             None
         }
     }
-
-    //TODO: new_node
 }
 
 impl<T: NodeContent> Forest<T> {
