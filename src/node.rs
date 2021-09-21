@@ -50,7 +50,7 @@ impl NodeContent for RawNode {
 
 /// Struct that contains a tree node.
 #[derive(Debug)]
-pub struct Node<T: NodeContent> {
+pub struct Node<T: NodeContent = RawNode> {
     /// Node content.
     content: T,
     /// Nodel level.

@@ -14,7 +14,7 @@ pub struct TreeLevel {
 
 /// Struct that contains a tree.
 #[derive(Debug)]
-pub struct Tree<T: NodeContent> {
+pub struct Tree<T: NodeContent = RawNode> {
     /// Tree nodes.
     nodes: Vec<Node<T>>,
     /// Tree levels.
@@ -23,7 +23,7 @@ pub struct Tree<T: NodeContent> {
 
 /// A forest is a set of trees.
 #[derive(Debug)]
-pub struct Forest<T: NodeContent> {
+pub struct Forest<T: NodeContent = RawNode> {
     /// Map with all the trees contained in the Forest.
     trees: Map<String, Tree<T>>
 }

@@ -1,7 +1,7 @@
 use socarel::*;
 
 fn main() {
-    let mut forest = Forest::<RawNode>::new();
+    let mut forest = <Forest>::new();
     forest.new_tree("my_tree");
     println!("Forest = {:#?}", forest);
 
