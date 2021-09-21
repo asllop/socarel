@@ -236,6 +236,20 @@ impl<T: NodeContent> Forest<T> {
         }
     }
 
+    /// Create new empty tree.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `name` - Tree name.
+    /// 
+    /// # Return
+    /// 
+    /// * Nothing.
+    /// 
+    pub fn new_tree(&mut self, name: &str) {
+        self.add_tree(name, Tree::new());
+    }
+
     /// Add a tree to forest.
     /// 
     /// # Aeguments
@@ -251,7 +265,19 @@ impl<T: NodeContent> Forest<T> {
         self.trees.insert(String::from(name), tree);
     }
 
-    //TODO: remove_tree
+    /// Remove tree from the forest.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `name` - Tree name.
+    /// 
+    /// # Return
+    /// 
+    /// * An [`Option`] with the removed tree.
+    /// 
+    pub fn remove_tree(&mut self, name: &str) -> Option<Tree<T>> {
+        return self.trees.remove(name);
+    }
 
     /// Get tree reference.
     /// 

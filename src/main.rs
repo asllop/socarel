@@ -1,15 +1,14 @@
 use socarel::*;
 
 fn main() {
-    let mut tree = Tree::<RawNode>::new();
-    let _root = tree.set_root("my root node").unwrap();
-    println!("Tree = {:#?}", tree);
     let mut forest = Forest::<RawNode>::new();
-    forest.add_tree("my_tree", tree);
+    forest.new_tree("my_tree");
     println!("Forest = {:#?}", forest);
 
     if let Some(my_tree) = forest.get_mut_tree("my_tree") {
-        my_tree.link_node("child node", _root);
+        let _root = my_tree.set_root("my root node").unwrap();
+        let _child = my_tree.link_node("child node", _root).unwrap();
+        println!("Child index = {}", _child);
         println!("My Tree = {:#?}", my_tree);
     }
 }
