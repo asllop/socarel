@@ -115,7 +115,28 @@ impl<T: NodeContent> Tree<T> {
         None
     }
     
-    //TODO: set_node (overwrite content, it must exist)
+    /// Overwrite node content. It must exist.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `node_content` - Node content.
+    /// * `node_index` - Node index.
+    /// 
+    /// # Return
+    /// 
+    /// * An [`Option`] with the node index.
+    ///
+    pub fn set_node(&mut self, node_content: &str, node_index: usize) -> Option<usize> {
+        if self.nodes.len() > node_index {
+            if let Some(new_node) = Node::<T>::new_node(node_content, self.nodes[node_index].get_level()) {
+                let current_node = self.nodes.get_mut(node_index).unwrap();
+                current_node.set_content(new_node.get_content());
+                return Some(node_index);
+            }
+        }
+        None
+    }
+
     //TODO: unlink_node (careful with levels!)
     //TODO: find_node (use `Node::child_map`)
 
