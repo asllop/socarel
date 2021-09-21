@@ -1,6 +1,6 @@
 # SOCAREL
 
-Rust crate to create, manipulate and traverse trees.
+Rust crate to generate, manipulate and traverse trees.
 
 ## Name
 
