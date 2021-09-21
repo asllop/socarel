@@ -197,6 +197,17 @@ impl<T: NodeContent> Node<T> {
         self.parents_children_pos = Some(parents_children_pos);
     }
 
+    /// Add new child.
+    /// 
+    /// # Aeguments
+    /// 
+    /// * `node_content` - Node content.
+    /// * `node_index` - Node index.
+    /// 
+    /// # Return
+    /// 
+    /// * Nothing.
+    ///
     pub fn add_child(&mut self, node_content: &str, node_index: usize) {
         self.children.push(node_index);
         self.child_map.insert(String::from(node_content), node_index);
