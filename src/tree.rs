@@ -55,17 +55,10 @@ impl<T: NodeContent> Tree<T> {
                 // Create root node
                 self.nodes.push(node);
                 self.add_to_level(1, 0);
+                return Some(0);
             }
-            else {
-                // Overwrite existing root node
-                let current_root = self.nodes.get_mut(0).unwrap();
-                current_root.set_content(node.get_content());
-            }
-            Some(0)
         }
-        else {
-            None
-        }
+        None
     }
 
     /// Create new node and link it to its parent.
@@ -126,7 +119,7 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// * An [`Option`] with the node index.
     ///
-    pub fn set_node(&mut self, node_content: &str, node_index: usize) -> Option<usize> {
+    pub fn update_node(&mut self, node_content: &str, node_index: usize) -> Option<usize> {
         if self.nodes.len() > node_index {
             if let Some(new_node) = Node::<T>::new_node(node_content, self.nodes[node_index].get_level()) {
                 let current_node = self.nodes.get_mut(node_index).unwrap();
