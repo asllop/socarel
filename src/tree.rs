@@ -1,5 +1,5 @@
 use crate::node::*;
-mod iter;
+use crate::iter::*;
 
 //---- Structs ----//
 
@@ -199,7 +199,28 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// * Iterators interface.
     ///
-    pub fn iterators(&self) -> iter::IterInterface<T> {
-        iter::IterInterface::new(self)
+    pub fn iterators(&self) -> IterInterface<T> {
+        IterInterface::new(self)
+    }
+
+    pub fn get_nodes_ref(&self) -> &[Node<T>] {
+        &self.nodes
+    }
+
+    pub fn get_nodes_len(&self) -> usize {
+        self.nodes.len()
+    }
+
+    /// Obtain a copy of the current tree without unlinked nodes and updating node indexes.
+    /// 
+    /// Node indexes of the old tree are no longer valid in the new tree returned by this function.
+    /// 
+    /// # Return
+    /// 
+    /// * Regenerated tree.
+    ///
+    pub fn regenerate(&self) -> Self {
+        //TODO
+        Tree::new()
     }
 }

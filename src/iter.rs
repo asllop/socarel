@@ -1,4 +1,7 @@
 use crate::tree::*;
+use crate::node::*;
+
+//TODO: instead of accessing tree.nodes directly, get a reference with Tree::get_nodes_ref()
 
 /// Interface for tree iterators.
 pub struct IterInterface<'a, T: NodeContent> {
@@ -124,7 +127,7 @@ impl<'a, T: NodeContent> Iterator for SequentialIter<'a, T> {
     type Item = (&'a Node<T>, usize);
     fn next(&mut self) -> Option<Self::Item> {
         let position = self.position;
-        match &self.tree.nodes.get(self.position) {
+        match &self.tree.get_nodes_ref().get(self.position) {
             Some(node) => {
                 self.position += 1;
                 Some((node, position))
@@ -143,10 +146,10 @@ pub struct InvSequentialIter<'a, T: NodeContent> {
 
 impl<'a, T: NodeContent> InvSequentialIter<'a, T> {
     pub fn new(tree: &'a Tree<T>) -> Self {
-        if tree.nodes.len() > 0 {
+        if tree.get_nodes_len() > 0 {
             Self {
                 tree,
-                position: tree.nodes.len() - 1,
+                position: tree.get_nodes_len() - 1,
                 finished: false
             }
         }
@@ -167,7 +170,7 @@ impl<'a, 'b, T: NodeContent> Iterator for InvSequentialIter<'a, T> {
             return None;
         }
         let position = self.position;
-        match &self.tree.nodes.get(self.position) {
+        match &self.tree.get_nodes_ref().get(self.position) {
             Some(node) => {
                 if self.position > 0 {
                     self.position -= 1;
@@ -210,7 +213,7 @@ impl<'a, T: NodeContent> Iterator for BfsIter<'a, T> {
         }
         // Get current node
         let position = self.next as usize;
-        if let Some(node) = self.tree.nodes.get(position) {
+        if let Some(node) = self.tree.get_nodes_ref().get(position) {
             // Put in the queue all children of current node
             for child in node.get_children_ref().iter() {
                 self.cua.push(*child);
@@ -261,7 +264,7 @@ impl<'a, T: NodeContent> Iterator for InvBfsIter<'a, T> {
         }
         // Get current node
         let position = self.next as usize;
-        if let Some(node) = self.tree.nodes.get(position) {
+        if let Some(node) = self.tree.get_nodes_ref().get(position) {
             // Put in the queue all children of current node
             for child in node.get_children_ref().iter().rev() {
                 self.cua.push(*child);
@@ -311,7 +314,7 @@ impl<'a, T: NodeContent> Iterator for PreDfsIter<'a, T> {
         }
         // Get current node
         let position = self.next;
-        if let Some(node) = self.tree.nodes.get(position) {
+        if let Some(node) = self.tree.get_nodes_ref().get(position) {
             // Put in the stack all children of current node
             for child in node.get_children_ref().iter().rev() {
                 self.pila.push(*child);
@@ -361,7 +364,7 @@ impl<'a, T: NodeContent> Iterator for InvPreDfsIter<'a, T> {
         }
         // Get current node
         let position = self.next as usize;
-        if let Some(node) = self.tree.nodes.get(position) {
+        if let Some(node) = self.tree.get_nodes_ref().get(position) {
             // Put in the stack all children of current node
             for child in node.get_children_ref().iter() {
                 self.pila.push(*child);
@@ -409,7 +412,7 @@ impl<'a, T: NodeContent> Iterator for PostDfsIter<'a, T> {
             let push_children = next_node_tuple.1;
             // get node from tree
             let position = next as usize;
-            if let Some(node) = self.tree.nodes.get(position) {
+            if let Some(node) = self.tree.get_nodes_ref().get(position) {
                 // We already pushed children of this node. Return the node itself.
                 if !push_children {
                     return Some((node, position));
@@ -462,7 +465,7 @@ impl<'a, T: NodeContent> Iterator for InvPostDfsIter<'a, T> {
             let push_children = next_node_tuple.1;
             // get node from tree
             let position = next as usize;
-            if let Some(node) = self.tree.nodes.get(position) {
+            if let Some(node) = self.tree.get_nodes_ref().get(position) {
                 if !push_children {
                     return Some((node, position));
                 }
