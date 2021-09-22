@@ -60,6 +60,12 @@ fn main() {
         iterate(my_tree.iterators().inv_bfs());
         println!("Pre DFS Iter:");
         iterate(my_tree.iterators().pre_dfs());
+        println!("Inv Pre DFS Iter:");
+        iterate(my_tree.iterators().inv_pre_dfs());
+        println!("Post DFS Iter:");
+        iterate(my_tree.iterators().post_dfs());
+        println!("Inv Post DFS Iter:");
+        iterate(my_tree.iterators().inv_post_dfs());
 
         //TODO: problema
         // El unlink no esborra els descendents de levels, així que els iteradors els fan servir.
@@ -67,7 +73,8 @@ fn main() {
         //  - Esborrar tots els descendents: molt lent
         //  - No fer servir levels
         //  - No fer servir unlink
-        //  - Afegir un procés extra després de unlink per a regenerar l'arbre. En essencia iterant i tornant a fer link_node en un altre arbre indepdent.
+        //  - Afegir un mètode regenerate que cal cridar quan haguem fet tots els unlinks: per a regenerar l'arbre. En essencia iterant i tornant a fer link_node en un altre arbre indepdent.
+        //    Podem afegir una propietat "unstable" a Tree per a deshabilitar els iteradors després de fer unlink.
         
     }
 }
