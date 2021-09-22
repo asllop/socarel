@@ -26,7 +26,7 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// 
     /// # Return
     /// 
-    /// * Sequential iterator.
+    /// * Iterator.
     ///
     pub fn sequential(&self) -> SequentialIter<'a, T> {
         SequentialIter::new(self.tree)
@@ -38,10 +38,20 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// 
     /// # Return
     /// 
-    /// * Sequential iterator.
+    /// * Iterator.
     ///
     pub fn inv_sequential(&self) -> InvSequentialIter<'a, T> {
         InvSequentialIter::new(self.tree)
+    }
+
+    /// Get BFS iterator. It uses the levels structure.
+    /// 
+    /// # Return
+    /// 
+    /// * Iterator.
+    ///
+    pub fn bfs(&self) -> BfsIter<'a, T> {
+        BfsIter::new(self.tree)
     }
 }
 
@@ -119,5 +129,44 @@ impl<'a, 'b, T: NodeContent> Iterator for InvSequentialIter<'a, T> {
             },
             None => None
         }
+    }
+}
+
+/// BFS Iterator, uses levels structure.
+pub struct BfsIter<'a, T: NodeContent> {
+    tree: &'a Tree<T>,
+    position: usize,
+    sub_position: usize
+}
+
+impl<'a, T: NodeContent> BfsIter<'a, T> {
+    pub fn new(tree: &'a Tree<T>) -> Self {
+        Self {
+            tree,
+            position: 0,
+            sub_position: 0
+        }
+    }
+}
+
+impl<'a, T: NodeContent> Iterator for BfsIter<'a, T> {
+    type Item = (&'a Node<T>, usize);
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some(tree_level) = self.tree.levels.get(self.position) {
+            if let Some(node_position) = tree_level.node_positions.get(self.sub_position) {
+                self.sub_position += 1;
+                let position = *node_position as usize;
+                return match self.tree.nodes.get(position) {
+                    Some(n) => Some((n, position)),
+                    None => None
+                };
+            }
+            else {
+                self.position += 1;
+                self.sub_position = 0;                    
+                return self.next();
+            }
+        }
+        None
     }
 }

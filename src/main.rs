@@ -52,6 +52,8 @@ fn main() {
         iterate(my_tree.iterators().sequential());
         println!("Inv Sequential Iter:");
         iterate(my_tree.iterators().inv_sequential());
+        println!("BFS Iter:");
+        iterate(my_tree.iterators().bfs());
     }
 }
 
