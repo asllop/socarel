@@ -320,4 +320,14 @@ impl<T: NodeContent> Node<T> {
             None
         }
     }
+
+    /// Get children array reference.
+    /// 
+    /// # Return
+    /// 
+    /// * Array ref.
+    ///
+    pub fn get_children_ref(&self) -> &[usize] {
+        &self.children
+    }
 }

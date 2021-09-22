@@ -63,6 +63,16 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     pub fn inv_bfs(&self) -> InvBfsIter<'a, T> {
         InvBfsIter::new(self.tree)
     }
+
+    /// Get Pre-Order DFS iterator
+    /// 
+    /// # Return
+    /// 
+    /// * Iterator.
+    ///
+    pub fn pre_dfs(&self) -> PreDfsIter<'a, T> {
+        PreDfsIter::new(self.tree)
+    }
 }
 
 /// Simple Iterator, in sequential order.
@@ -220,5 +230,55 @@ impl<'a, T: NodeContent> Iterator for InvBfsIter<'a, T> {
             }
         }
         None
+    }
+}
+
+/// Pre-Order DFS Iterator
+pub struct PreDfsIter<'a, T: NodeContent> {
+    tree: &'a Tree<T>,
+    pila: Vec<usize>,
+    next: usize,
+    finished: bool
+}
+
+impl<'a, T: NodeContent> PreDfsIter<'a, T> {
+    pub fn new(tree: &'a Tree<T>) -> Self {
+        Self {
+            tree,
+            pila: vec!(),
+            next: 0,
+            finished: false
+        }
+    }
+}
+
+impl<'a, T: NodeContent> Iterator for PreDfsIter<'a, T> {
+    type Item = (&'a Node<T>, usize);
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.finished {
+            return None;
+        }
+        // Get current node
+        let position = self.next;
+        if let Some(node) = self.tree.nodes.get(position) {
+            // Put in the stack all children of current node
+            for child in node.get_children_ref().iter().rev() {
+                self.pila.push(*child);
+            }
+            // Get next node from stack.
+            if let Some(next_node_index) = self.pila.pop() {
+                self.next = next_node_index;
+            }
+            else {
+                // If nothing in stack, end
+                self.finished = true;
+            }
+            // Return current node
+            Some((node, position))
+        }
+        else {
+            None
+        }
+
     }
 }
