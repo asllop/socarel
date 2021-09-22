@@ -1,8 +1,9 @@
-use socarel::*;
+use socarel::{Forest, NodeContent};
 
 fn main() {
     let mut forest = <Forest>::new();
     forest.new_tree("my_tree");
+    forest.new_tree("other_tree");
 
     println!("Forest = {:#?}", forest);
 
@@ -22,6 +23,7 @@ fn main() {
         println!("-------------------------------------------------------");
 
         my_tree.update_node("new child 1 content", _child_1);
+
         println!("New Child 1 content = {:#?}", my_tree.get_node_content(_child_1).unwrap().get_val());
 
         println!("My Tree after node update = {:#?}", my_tree);
@@ -34,13 +36,21 @@ fn main() {
 
         println!("-------------------------------------------------------");
 
-        let _found_node_1 = my_tree.find_node(&["my root node", "new child 1 content", "grandchild node"]);
-        println!("_found_node_1 index = {:#?}", _found_node_1);
+        // Is the unlinked node, with return None
+        let _found_node_a = my_tree.find_node(&["my root node", "new child 1 content", "grandchild 1 node"]);
+        println!("find '/my root node/new child 1 content/grandchild 1 node/' index = {:#?}", _found_node_a);
 
-        let _found_node_2 = my_tree.find_node(&["my root node", "child node 2", "grandchild 2 node"]);
-        println!("_found_node_2 index = {:#?}", _found_node_2);
+        let _found_node_b = my_tree.find_node(&["my root node", "child node 2", "grandchild 2 node"]);
+        println!("find '/my root node/child node 2/grandchild 2 node/' index = {:#?}", _found_node_b);
 
         let _found_root = my_tree.find_node(&["my root node"]);
-        println!("_found_root index = {:#?}", _found_root);
+        println!("find '/my root node/' index = {:#?}", _found_root);
+
+        println!("-------------------------------------------------------");
+
+        println!("Simple Iter:");
+        for (node, index) in my_tree.iterators().sequential() {
+            println!("At index {} found node {}", index, node.get_content_ref().get_val());
+        }
     }
 }

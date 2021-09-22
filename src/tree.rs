@@ -1,4 +1,5 @@
 use crate::node::*;
+mod iter;
 
 //---- Structs ----//
 
@@ -201,6 +202,16 @@ impl<T: NodeContent> Tree<T> {
             }
         }
         last_node_index
+    }
+
+    /// Get iterators interface.
+    /// 
+    /// # Return
+    /// 
+    /// * Iterators interface.
+    ///
+    pub fn iterators(&self) -> iter::IterInterface<T> {
+        iter::IterInterface::new(self)
     }
 
     /// Add node to levels array.
