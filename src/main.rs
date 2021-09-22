@@ -20,5 +20,9 @@ fn main() {
 
         my_tree.update_node("new child 1 content", _child_1);
         println!("New Child 1 content = {:#?}", my_tree.get_node_content(_child_1).unwrap().get_val());
+
+        my_tree.unlink_node(_child_1);
+
+        println!("My Tree after unlink = {:#?}", my_tree);
     }
 }

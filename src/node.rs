@@ -6,7 +6,7 @@ use std::collections::HashMap as Map;
 pub trait NodeContent {
     /// Constructor.
     /// 
-    /// # Aeguments
+    /// # Arguments
     /// 
     /// * `content` - Node content.
     /// 
@@ -55,6 +55,8 @@ pub struct Node<T: NodeContent = RawNode> {
     content: T,
     /// Nodel level.
     level: usize,
+    /// Level array position.
+    level_pos: usize,
     /// Parent node index in the tree array.
     parent_position: Option<usize>,
     // Map of content/node index, to find a child by name.
@@ -70,7 +72,7 @@ pub struct Node<T: NodeContent = RawNode> {
 impl<T: NodeContent> Node<T> {
     /// Create new root node.
     /// 
-    /// # Aeguments
+    /// # Arguments
     /// 
     /// * `content` - Node content.
     /// 
@@ -84,7 +86,7 @@ impl<T: NodeContent> Node<T> {
 
     /// Create new node.
     /// 
-    /// # Aeguments
+    /// # Arguments
     /// 
     /// * `content` - Node content.
     /// * `level` - Node level.
@@ -99,6 +101,7 @@ impl<T: NodeContent> Node<T> {
                 Node {
                     content: content_node,
                     level,
+                    level_pos: 0,
                     parent_position: None,
                     child_map: Map::new(),
                     parents_children_pos: None,
@@ -113,7 +116,7 @@ impl<T: NodeContent> Node<T> {
 
     /// Set content.
     /// 
-    /// # Aeguments
+    /// # Arguments
     /// 
     /// * `content` - Node content.
     /// 
@@ -147,7 +150,7 @@ impl<T: NodeContent> Node<T> {
 
     /// Set level.
     /// 
-    /// # Aeguments
+    /// # Arguments
     /// 
     /// * `level` - Node level.
     /// 
@@ -165,8 +168,32 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// * Node level.
     ///
-    pub fn get_level(&mut self) -> usize {
+    pub fn get_level(&self) -> usize {
         self.level
+    }
+
+    /// Set level array pos.
+    /// 
+    /// # Arguments
+    /// 
+    /// * `level_pos` - Position of node in the level array.
+    /// 
+    /// # Return
+    /// 
+    /// * Nothing.
+    ///
+    pub fn set_level_pos(&mut self, level_pos: usize) {
+        self.level_pos = level_pos;
+    }
+
+    /// Get level array position.
+    /// 
+    /// # Return
+    /// 
+    /// * Node level.
+    ///
+    pub fn get_level_pos(&self) -> usize {
+        self.level_pos
     }
 
     /// Get number of children.
@@ -181,7 +208,7 @@ impl<T: NodeContent> Node<T> {
 
     /// Set parent node position.
     /// 
-    /// # Aeguments
+    /// # Arguments
     /// 
     /// * `parent_position` - Parent node position.
     /// 
@@ -193,9 +220,19 @@ impl<T: NodeContent> Node<T> {
         self.parent_position = Some(parent_position);
     }
 
+    /// Get parent node position.
+    /// 
+    /// # Return
+    /// 
+    /// * Parent node position..
+    ///
+    pub fn get_parent_position(&self) -> Option<usize> {
+        self.parent_position
+    }
+
     /// Set parent's children array position.
     /// 
-    /// # Aeguments
+    /// # Arguments
     /// 
     /// * `parents_children_pos` - Position of current node in parent's children array.
     /// 
@@ -207,9 +244,17 @@ impl<T: NodeContent> Node<T> {
         self.parents_children_pos = Some(parents_children_pos);
     }
 
+    /// Get parent's children array position.
+    /// 
+    /// * Position of current node in parent's children array.
+    ///
+    pub fn get_parents_children_pos(&self) -> Option<usize> {
+        self.parents_children_pos
+    }
+
     /// Add new child.
     /// 
-    /// # Aeguments
+    /// # Arguments
     /// 
     /// * `node_content` - Node content.
     /// * `node_index` - Node index.
@@ -221,5 +266,20 @@ impl<T: NodeContent> Node<T> {
     pub fn add_child(&mut self, node_content: &str, node_index: usize) {
         self.children.push(node_index);
         self.child_map.insert(String::from(node_content), node_index);
+    }
+
+    /// Remove child.
+    /// 
+    /// # Arguments
+    /// 
+    /// * `node_index` - Node index.
+    /// 
+    /// # Return
+    /// 
+    /// * Nothing.
+    ///
+    pub fn remove_child(&mut self, node_content: &str, node_index: usize) {
+        self.child_map.remove(node_content);
+        self.children.remove(node_index);
     }
 }
