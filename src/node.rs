@@ -55,8 +55,6 @@ pub struct Node<T: NodeContent = RawNode> {
     content: T,
     /// Nodel level.
     level: usize,
-    /// Level array position.
-    level_pos: usize,
     /// Parent node index in the tree array.
     parent_position: Option<usize>,
     // Map of content/node index, to find a child by name.
@@ -101,7 +99,6 @@ impl<T: NodeContent> Node<T> {
                 Node {
                     content: content_node,
                     level,
-                    level_pos: 0,
                     parent_position: None,
                     child_map: Map::new(),
                     parents_children_pos: None,
@@ -170,30 +167,6 @@ impl<T: NodeContent> Node<T> {
     ///
     pub fn get_level(&self) -> usize {
         self.level
-    }
-
-    /// Set level array pos.
-    /// 
-    /// # Arguments
-    /// 
-    /// * `level_pos` - Position of node in the level array.
-    /// 
-    /// # Return
-    /// 
-    /// * Nothing.
-    ///
-    pub fn set_level_pos(&mut self, level_pos: usize) {
-        self.level_pos = level_pos;
-    }
-
-    /// Get level array position.
-    /// 
-    /// # Return
-    /// 
-    /// * Node level.
-    ///
-    pub fn get_level_pos(&self) -> usize {
-        self.level_pos
     }
 
     /// Get number of children.

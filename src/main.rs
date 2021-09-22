@@ -30,7 +30,6 @@ fn main() {
 
         println!("-------------------------------------------------------");
 
-        /*
         my_tree.unlink_node(_child_1);
 
         println!("My Tree after unlink = {:#?}", my_tree);
@@ -38,7 +37,6 @@ fn main() {
         println!("-------------------------------------------------------");
 
         // Is the unlinked node, with return None
-        */
         let _found_node_a = my_tree.find_node(&["my root node", "child node 1", "grandchild 1 node"]);
         println!("find '/my root node/child node 1/grandchild 1 node/' index = {:#?}", _found_node_a);
 
@@ -66,16 +64,6 @@ fn main() {
         iterate(my_tree.iterators().post_dfs());
         println!("Inv Post DFS Iter:");
         iterate(my_tree.iterators().inv_post_dfs());
-
-        //TODO: problema
-        // El unlink no esborra els descendents de levels, així que els iteradors els fan servir.
-        // Solucions:
-        //  - Esborrar tots els descendents: molt lent
-        //  - No fer servir levels: només se'n resenten els iteradors BFS i Inv-BFS.
-        //  - No fer servir unlink
-        //  - Afegir un mètode regenerate que cal cridar quan haguem fet tots els unlinks: per a regenerar l'arbre. En essencia iterant i tornant a fer link_node en un altre arbre indepdent.
-        //    Podem afegir una propietat "unstable" a Tree per a deshabilitar els iteradors després de fer unlink.
-        
     }
 }
 
