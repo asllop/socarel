@@ -53,6 +53,16 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     pub fn bfs(&self) -> BfsIter<'a, T> {
         BfsIter::new(self.tree)
     }
+
+    /// Get Inverse BFS iterator. It uses the levels structure.
+    /// 
+    /// # Return
+    /// 
+    /// * Iterator.
+    ///
+    pub fn inv_bfs(&self) -> InvBfsIter<'a, T> {
+        InvBfsIter::new(self.tree)
+    }
 }
 
 /// Simple Iterator, in sequential order.
@@ -163,6 +173,48 @@ impl<'a, T: NodeContent> Iterator for BfsIter<'a, T> {
             }
             else {
                 self.position += 1;
+                self.sub_position = 0;                    
+                return self.next();
+            }
+        }
+        None
+    }
+}
+
+/// Inverse BFS Iterator, uses levels structure.
+pub struct InvBfsIter<'a, T: NodeContent> {
+    tree: &'a Tree<T>,
+    position: usize,
+    sub_position: usize
+}
+
+impl<'a, T: NodeContent> InvBfsIter<'a, T> {
+    pub fn new(tree: &'a Tree<T>) -> Self {
+        Self {
+            tree,
+            position: tree.levels.len() - 1,
+            sub_position: 0
+        }
+    }
+}
+
+impl<'a, T: NodeContent> Iterator for InvBfsIter<'a, T> {
+    type Item = (&'a Node<T>, usize);
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some(tree_level) = self.tree.levels.get(self.position) {
+            if let Some(node_position) = tree_level.node_positions.get(self.sub_position) {
+                self.sub_position += 1;
+                let position = *node_position as usize;
+                return match self.tree.nodes.get(position) {
+                    Some(n) => Some((n, position)),
+                    None => None
+                };
+            }
+            else {
+                if self.position == 0 {
+                    return None;
+                }
+                self.position -= 1;
                 self.sub_position = 0;                    
                 return self.next();
             }

@@ -54,11 +54,13 @@ fn main() {
         iterate(my_tree.iterators().inv_sequential());
         println!("BFS Iter:");
         iterate(my_tree.iterators().bfs());
+        println!("Inv BFS Iter:");
+        iterate(my_tree.iterators().inv_bfs());
     }
 }
 
 fn iterate<'a>(iter: impl Iterator<Item=(&'a Node, usize)>) {
     for (node, index) in iter {
-        println!("At index {} found node {}", index, node.get_content_ref().get_val());
+        println!("At index {} found node `{}`", index, node.get_content_ref().get_val());
     }
 }
