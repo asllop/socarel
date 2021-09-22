@@ -77,6 +77,7 @@ impl<T: NodeContent> Tree<T> {
                 let new_node_index = self.nodes.len();
                 let level_pos = self.add_to_level(new_node_level, new_node_index).expect("Could not create level for node");
                 new_node.set_level_pos(level_pos);
+                let node_content = String::from(new_node.get_content_ref().get_val());
                 self.nodes.push(new_node);
                 self.nodes[parent_node_index].add_child(node_content, new_node_index);
                 return Some(new_node_index);
@@ -116,6 +117,7 @@ impl<T: NodeContent> Tree<T> {
     pub fn update_node(&mut self, node_content: &str, node_index: usize) -> Option<usize> {
         if self.nodes.len() > node_index {
             if let Some(new_node) = Node::<T>::new_node(node_content, self.nodes[node_index].get_level()) {
+                //TODO: update parent's child_map
                 let current_node = self.nodes.get_mut(node_index).unwrap();
                 current_node.set_content(new_node.get_content());
                 return Some(node_index);

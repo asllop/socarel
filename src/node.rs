@@ -263,9 +263,9 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// * Nothing.
     ///
-    pub fn add_child(&mut self, node_content: &str, node_index: usize) {
+    pub fn add_child(&mut self, node_content: String, node_index: usize) {
         self.children.push(node_index);
-        self.child_map.insert(String::from(node_content), node_index);
+        self.child_map.insert(node_content, node_index);
     }
 
     /// Remove child.
