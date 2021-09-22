@@ -2,7 +2,7 @@ use crate::node::*;
 
 //---- Structs ----//
 
-/// Struct that contains tree levels information.
+/// Struct that contains tree levels information. Used to speed-up some iterators.
 #[derive(Debug)]
 pub struct TreeLevel {
     /// Tree level.
@@ -161,7 +161,47 @@ impl<T: NodeContent> Tree<T> {
         None
     }
 
-    //TODO: find_node (use `Node::child_map`)
+    /// Find node in the try by content.
+    /// 
+    /// The complexity of this operation is O(p), where `p` is the number of elements in the path.
+    /// 
+    /// # Arguments
+    /// 
+    /// * `path` - Path of nodes, starting from root.
+    /// 
+    /// # Return
+    /// 
+    /// * An [`Option`] with the node index.
+    ///
+    pub fn find_node(&self, path: &[&str]) -> Option<usize> {
+        let mut last_node_index = None;
+        // Check root node
+        if self.nodes.len() > 0 && path.len() > 0 {
+            if self.nodes[0].get_content_ref().get_val() == path[0] {
+                last_node_index = Some(0);
+            }
+            else {
+                return None;
+            }
+        }
+        // Check following nodes
+        let mut node_index = 0;
+        for path_element in path[1..].iter() {
+            if self.nodes.len() > node_index {
+                if let Some(path_element_index) = self.nodes[node_index].get_child(path_element) {
+                    last_node_index = Some(path_element_index);
+                    node_index = path_element_index;
+                }
+                else {
+                    return None;
+                }
+            }
+            else {
+                return None;
+            }
+        }
+        last_node_index
+    }
 
     /// Add node to levels array.
     /// 

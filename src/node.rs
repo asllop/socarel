@@ -301,4 +301,23 @@ impl<T: NodeContent> Node<T> {
         }
         None
     }
+
+    /// Get child index using node content.
+    /// 
+    /// # Arguments
+    /// 
+    /// * `node_content` - Current node content.
+    /// 
+    /// # Return
+    /// 
+    /// * An [`Option`] with the node index.
+    ///
+    pub fn get_child(&self, node_content: &str) -> Option<usize> {
+        if let Some(node_index) = self.child_map.get(node_content) {
+            Some(*node_index)
+        }
+        else {
+            None
+        }
+    }
 }
