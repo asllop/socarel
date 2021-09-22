@@ -223,6 +223,8 @@ impl<T: NodeContent> Tree<T> {
         self.nodes.len()
     }
 
+    // TODO
+    /*
     /// Obtain a copy of the current tree without unlinked nodes and updating node indexes.
     /// 
     /// Node indexes of the old tree are no longer valid in the new tree returned by this function.
@@ -232,7 +234,7 @@ impl<T: NodeContent> Tree<T> {
     /// * Regenerated tree.
     ///
     pub fn regenerate(&self) -> Self {
-        //TODO
         Tree::new()
     }
+    */
 }

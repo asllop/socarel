@@ -1,8 +1,6 @@
 use crate::tree::*;
 use crate::node::*;
 
-//TODO: instead of accessing tree.nodes directly, get a reference with Tree::get_nodes_ref()
-
 /// Interface for tree iterators.
 pub struct IterInterface<'a, T: NodeContent> {
     tree: &'a Tree<T>

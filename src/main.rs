@@ -36,7 +36,7 @@ fn main() {
 
         println!("-------------------------------------------------------");
 
-        // Is the unlinked node, with return None
+        // Is the unlinked node, will return None
         let _found_node_a = my_tree.find_node(&["my root node", "child node 1", "grandchild 1 node"]);
         println!("find '/my root node/child node 1/grandchild 1 node/' index = {:#?}", _found_node_a);
 
@@ -69,6 +69,6 @@ fn main() {
 
 fn iterate<'a>(iter: impl Iterator<Item=(&'a Node, usize)>) {
     for (node, index) in iter {
-        println!("At index {} found node `{}`", index, node.get_content_ref().get_val());
+        println!("At index {} found node `{}` ({})", index, node.get_content_ref().get_val(), node.get_level());
     }
 }
