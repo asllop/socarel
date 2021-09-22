@@ -44,7 +44,7 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
         InvSequentialIter::new(self.tree)
     }
 
-    /// Get BFS iterator. It uses the levels structure.
+    /// Get BFS iterator.
     /// 
     /// # Return
     /// 
@@ -54,7 +54,7 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
         BfsIter::new(self.tree)
     }
 
-    /// Get Inverse BFS iterator. It uses the levels structure.
+    /// Get Inverse BFS iterator.
     /// 
     /// # Return
     /// 
@@ -182,6 +182,109 @@ impl<'a, 'b, T: NodeContent> Iterator for InvSequentialIter<'a, T> {
     }
 }
 
+/// BFS Iterator.
+pub struct BfsIter<'a, T: NodeContent> {
+    tree: &'a Tree<T>,
+    // TODO: use std::collections::VecDeque instead of Vec
+    cua: Vec<usize>,
+    next: usize,
+    finished: bool
+}
+
+impl<'a, T: NodeContent> BfsIter<'a, T> {
+    pub fn new(tree: &'a Tree<T>) -> Self {
+        Self {
+            tree,
+            cua: vec!(),
+            next: 0,
+            finished: false
+        }
+    }
+}
+
+impl<'a, T: NodeContent> Iterator for BfsIter<'a, T> {
+    type Item = (&'a Node<T>, usize);
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.finished {
+            return None;
+        }
+        // Get current node
+        let position = self.next as usize;
+        if let Some(node) = self.tree.nodes.get(position) {
+            // Put in the queue all children of current node
+            for child in node.get_children_ref().iter() {
+                self.cua.push(*child);
+            }
+            // Get next node from queue.
+            if self.cua.len() > 0 {
+                self.next = self.cua.remove(0);
+            }
+            else {
+                // If nothing in thq queue, end
+                self.finished = true;
+            }
+            // Return current node
+            Some((node, position))
+        }
+        else {
+            None
+        }
+
+    }
+}
+
+/// Inverse BFS Iterator.
+pub struct InvBfsIter<'a, T: NodeContent> {
+    tree: &'a Tree<T>,
+    // TODO: use std::collections::VecDeque instead of Vec
+    cua: Vec<usize>,
+    next: usize,
+    finished: bool
+}
+
+impl<'a, T: NodeContent> InvBfsIter<'a, T> {
+    pub fn new(tree: &'a Tree<T>) -> Self {
+        Self {
+            tree,
+            cua: vec!(),
+            next: 0,
+            finished: false
+        }
+    }
+}
+
+impl<'a, T: NodeContent> Iterator for InvBfsIter<'a, T> {
+    type Item = (&'a Node<T>, usize);
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.finished {
+            return None;
+        }
+        // Get current node
+        let position = self.next as usize;
+        if let Some(node) = self.tree.nodes.get(position) {
+            // Put in the queue all children of current node
+            for child in node.get_children_ref().iter().rev() {
+                self.cua.push(*child);
+            }
+            // Get next node from queue.
+            if self.cua.len() > 0 {
+                self.next = self.cua.remove(0);
+            }
+            else {
+                // If nothing in thq queue, end
+                self.finished = true;
+            }
+            // Return current node
+            Some((node, position))
+        }
+        else {
+            None
+        }
+
+    }
+}
+
+/*
 /// BFS Iterator, uses levels structure.
 pub struct BfsIter<'a, T: NodeContent> {
     tree: &'a Tree<T>,
@@ -262,6 +365,7 @@ impl<'a, T: NodeContent> Iterator for InvBfsIter<'a, T> {
         None
     }
 }
+*/
 
 /// Pre-Order DFS Iterator
 pub struct PreDfsIter<'a, T: NodeContent> {

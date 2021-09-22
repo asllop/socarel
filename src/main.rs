@@ -71,7 +71,7 @@ fn main() {
         // El unlink no esborra els descendents de levels, així que els iteradors els fan servir.
         // Solucions:
         //  - Esborrar tots els descendents: molt lent
-        //  - No fer servir levels
+        //  - No fer servir levels: només se'n resenten els iteradors BFS i Inv-BFS.
         //  - No fer servir unlink
         //  - Afegir un mètode regenerate que cal cridar quan haguem fet tots els unlinks: per a regenerar l'arbre. En essencia iterant i tornant a fer link_node en un altre arbre indepdent.
         //    Podem afegir una propietat "unstable" a Tree per a deshabilitar els iteradors després de fer unlink.
