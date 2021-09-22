@@ -282,4 +282,23 @@ impl<T: NodeContent> Node<T> {
         self.child_map.remove(node_content);
         self.children.remove(node_index);
     }
+
+    /// Update child map.
+    /// 
+    /// # Arguments
+    /// 
+    /// * `node_content` - Current node content.
+    /// * `new_node_content` - New node content.
+    /// 
+    /// # Return
+    /// 
+    /// * An [`Option`] with the node index.
+    ///
+    pub fn update_child(&mut self, node_content: &str, new_node_content: &str) -> Option<usize> {
+        if let Some(node_index) = self.child_map.remove(node_content) {
+            self.child_map.insert(String::from(new_node_content), node_index);
+            return Some(node_index);
+        }
+        None
+    }
 }

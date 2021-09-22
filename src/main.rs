@@ -18,9 +18,15 @@ fn main() {
         println!("Child 2 content = {:#?}", my_tree.get_node_content(_child_2).unwrap().get_val());
         println!("Grandchild content = {:#?}", my_tree.get_node_content(_grandchild).unwrap().get_val());
 
+        println!("-------------------------------------------------------");
+
         my_tree.update_node("new child 1 content", _child_1);
         println!("New Child 1 content = {:#?}", my_tree.get_node_content(_child_1).unwrap().get_val());
 
+        println!("My Tree after node update = {:#?}", my_tree);
+
+        println!("-------------------------------------------------------");
+        
         my_tree.unlink_node(_child_1);
 
         println!("My Tree after unlink = {:#?}", my_tree);

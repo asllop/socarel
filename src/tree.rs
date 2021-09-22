@@ -117,7 +117,11 @@ impl<T: NodeContent> Tree<T> {
     pub fn update_node(&mut self, node_content: &str, node_index: usize) -> Option<usize> {
         if self.nodes.len() > node_index {
             if let Some(new_node) = Node::<T>::new_node(node_content, self.nodes[node_index].get_level()) {
-                //TODO: update parent's child_map
+                // Update parent's child_map
+                if let Some(parent_position) = self.nodes[node_index].get_parent_position() {
+                    let old_node_content = String::from(self.nodes[node_index].get_content_ref().get_val());
+                    self.nodes[parent_position].update_child(&old_node_content, node_content);
+                }
                 let current_node = self.nodes.get_mut(node_index).unwrap();
                 current_node.set_content(new_node.get_content());
                 return Some(node_index);
