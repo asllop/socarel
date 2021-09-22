@@ -203,10 +203,22 @@ impl<T: NodeContent> Tree<T> {
         IterInterface::new(self)
     }
 
+    /// Get reference to nodes array.
+    /// 
+    /// # Return
+    /// 
+    /// * Array reference.
+    ///
     pub fn get_nodes_ref(&self) -> &[Node<T>] {
         &self.nodes
     }
 
+    /// Get size of nodes array.
+    /// 
+    /// # Return
+    /// 
+    /// * Size.
+    ///
     pub fn get_nodes_len(&self) -> usize {
         self.nodes.len()
     }
