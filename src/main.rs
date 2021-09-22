@@ -1,4 +1,4 @@
-use socarel::{Forest, NodeContent};
+use socarel::{Forest, NodeContent, Node};
 
 fn main() {
     let mut forest = <Forest>::new();
@@ -48,9 +48,15 @@ fn main() {
 
         println!("-------------------------------------------------------");
 
-        println!("Simple Iter:");
-        for (node, index) in my_tree.iterators().sequential() {
-            println!("At index {} found node {}", index, node.get_content_ref().get_val());
-        }
+        println!("Sequential Iter:");
+        iterate(my_tree.iterators().sequential());
+        println!("Inv Sequential Iter:");
+        iterate(my_tree.iterators().inv_sequential());
+    }
+}
+
+fn iterate<'a>(iter: impl Iterator<Item=(&'a Node, usize)>) {
+    for (node, index) in iter {
+        println!("At index {} found node {}", index, node.get_content_ref().get_val());
     }
 }

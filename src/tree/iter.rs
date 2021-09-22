@@ -1,19 +1,9 @@
 use crate::tree::*;
 
-//---- Structs ----//
-
 /// Interface for tree iterators.
 pub struct IterInterface<'a, T: NodeContent> {
     tree: &'a Tree<T>
 }
-
-/// Simple Iterator, in sequential order.
-pub struct TreeIterSequential<'a, T: NodeContent> {
-    tree: &'a Tree<T>,
-    position: usize
-}
-
-//---- Implementations ----//
 
 impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// Create iterator interface.
@@ -38,12 +28,30 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// 
     /// * Sequential iterator.
     ///
-    pub fn sequential(&self) -> TreeIterSequential<'a, T> {
-        TreeIterSequential::new(self.tree)
+    pub fn sequential(&self) -> SequentialIter<'a, T> {
+        SequentialIter::new(self.tree)
+    }
+
+    /// Get inverse sequential iterator.
+    /// 
+    /// Iterates over the array that contains the nodes in inverted sequential order. Even unlinked nodes.
+    /// 
+    /// # Return
+    /// 
+    /// * Sequential iterator.
+    ///
+    pub fn inv_sequential(&self) -> InvSequentialIter<'a, T> {
+        InvSequentialIter::new(self.tree)
     }
 }
 
-impl<'a, T: NodeContent> TreeIterSequential<'a, T> {
+/// Simple Iterator, in sequential order.
+pub struct SequentialIter<'a, T: NodeContent> {
+    tree: &'a Tree<T>,
+    position: usize
+}
+
+impl<'a, T: NodeContent> SequentialIter<'a, T> {
     pub fn new(tree: &'a Tree<T>) -> Self {
         Self {
             tree,
@@ -52,13 +60,61 @@ impl<'a, T: NodeContent> TreeIterSequential<'a, T> {
     }
 }
 
-impl<'a, T: NodeContent> Iterator for TreeIterSequential<'a, T> {
+impl<'a, T: NodeContent> Iterator for SequentialIter<'a, T> {
     type Item = (&'a Node<T>, usize);
     fn next(&mut self) -> Option<Self::Item> {
         let position = self.position;
         match &self.tree.nodes.get(self.position) {
             Some(node) => {
                 self.position += 1;
+                Some((node, position))
+            },
+            None => None
+        }
+    }
+}
+
+/// Simple Iterator, in inverted sequential order.
+pub struct InvSequentialIter<'a, T: NodeContent> {
+    tree: &'a Tree<T>,
+    position: usize,
+    finished: bool
+}
+
+impl<'a, T: NodeContent> InvSequentialIter<'a, T> {
+    pub fn new(tree: &'a Tree<T>) -> Self {
+        if tree.nodes.len() > 0 {
+            Self {
+                tree,
+                position: tree.nodes.len() - 1,
+                finished: false
+            }
+        }
+        else {
+            Self {
+                tree,
+                position: 0,
+                finished: true
+            }
+        }
+    }
+}
+
+impl<'a, 'b, T: NodeContent> Iterator for InvSequentialIter<'a, T> {
+    type Item = (&'a Node<T>, usize);
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.finished {
+            return None;
+        }
+        let position = self.position;
+        match &self.tree.nodes.get(self.position) {
+            Some(node) => {
+                if self.position > 0 {
+                    self.position -= 1;
+                }
+                else {
+                    self.finished = true;
+                }
                 Some((node, position))
             },
             None => None
