@@ -3,7 +3,6 @@ use crate::tree::*;
 use crate::node::*;
 
 //TODO: add check for all iterators
-//TODO: generate tree and edit, unlink nodes, update nodes and check integrity
 //TODO: check find nodes with and without unlinked nodes
 //TODO: check dialects (node with weight)
 
@@ -96,6 +95,39 @@ fn check_tree_integrity() {
                     if n.get_num_chuildren() != 0 { panic!("child_3 hasn't 0 children"); }
                 }
                 _ => {}
+            }
+        }
+    }
+    else {
+        panic!("Tree ID not found");
+    }
+}
+
+#[test]
+fn mutate_and_check_integrity() {
+    let mut forest = forest_sample();
+    let tree = forest.get_mut_tree("test_tree").expect("Could not find tree ID");
+    let child_2_1 = tree.find_node(&["root_node", "child_2", "child_2_1"]).expect("Could nod find node");
+    tree.update_node("remove_me", child_2_1).expect("Could not update node");
+    let remove_me = tree.find_node(&["root_node", "child_2", "remove_me"]).expect("Could nod find modified node");
+    assert_eq!(child_2_1, remove_me);
+    tree.unlink_node(remove_me).expect("Could unlink node");
+    for (i, (n, _)) in tree.iterators().bfs().enumerate() {
+        match i {
+            0 => {
+                if !n.get_content_ref().get_val().eq("root_node") { panic!("Wrong root_node content") }
+            },
+            1 => {
+                if !n.get_content_ref().get_val().eq("child_1") { panic!("Wrong child_1 content") }
+            },
+            2 => {
+                if !n.get_content_ref().get_val().eq("child_2") { panic!("Wrong child_2 content") }
+            },
+            3 => {
+                if !n.get_content_ref().get_val().eq("child_3") { panic!("Wrong child_3 content") }
+            },
+            _ => {
+                panic!("Invalid number of nodes");
             }
         }
     }
