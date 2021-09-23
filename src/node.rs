@@ -23,6 +23,16 @@ pub trait NodeContent {
     /// * Node value.
     ///
     fn get_val(&self) -> &str;
+
+    /// Generate node content.
+    /// 
+    /// Use by serializers to create back the string of a node that is parsed by a NodeContent implementer.
+    /// 
+    /// # Return
+    /// 
+    /// * Node content.
+    ///
+    fn gen_content(&self) -> String;
 }
 
 /// Default [`NodeContent`] struct.
@@ -45,6 +55,10 @@ impl NodeContent for RawNode {
 
     fn get_val(&self) -> &str {
         &self.content
+    }
+
+    fn gen_content(&self) -> String {
+        String::from(self.get_val())
     }
 }
 
