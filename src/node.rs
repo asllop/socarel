@@ -267,7 +267,7 @@ impl<T: NodeContent> Node<T> {
     ///
     pub fn remove_child(&mut self, node_content: &str, node_index: usize) {
         self.child_map.remove(node_content);
-        self.children.remove(node_index);
+        self.children[node_index] = usize::MAX;
     }
 
     /// Update child map.
