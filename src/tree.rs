@@ -3,15 +3,6 @@ use crate::iter::*;
 
 //---- Structs ----//
 
-/// Struct that contains tree levels information. Used to speed-up some iterators.
-#[derive(Debug)]
-pub struct TreeLevel {
-    /// Tree level.
-    level: usize,
-    /// Nodes of the tree level. Positions within the [`nodes`][`Tree::nodes`] array.
-    node_positions: Vec<usize>
-}
-
 /// Struct that contains a tree.
 #[derive(Debug)]
 pub struct Tree<T: NodeContent = RawNode> {

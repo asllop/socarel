@@ -10,4 +10,5 @@ pub use tree::*;
 pub use forest::*;
 pub use iter::*;
 
-//TODO: tests
+#[cfg(test)]
+mod tests;
