@@ -1,10 +1,15 @@
 use crate::forest::*;
+use crate::tree::*;
 use crate::node::*;
+
+//TODO: add check for all iterators
+//TODO: generate tree and edit, unlink nodes, update nodes and check integrity
+//TODO: check find nodes with and without unlinked nodes
+//TODO: check dialects (node with weight)
 
 fn forest_sample() -> Forest {
     let mut forest = <Forest>::new();
-    forest.new_tree("test_tree");
-    let tree = forest.get_mut_tree("test_tree").unwrap();
+    let mut tree = <Tree>::new();
     let _root = tree.set_root("root_node").unwrap();
     let _child_1 = tree.link_node("child_1", _root).unwrap();
     let _child_2 = tree.link_node("child_2", _root).unwrap();
@@ -12,6 +17,7 @@ fn forest_sample() -> Forest {
     let _child_2_1_1 = tree.link_node("child_2_1_1", _child_2_1).unwrap();
     let _child_2_2 = tree.link_node("child_2_2", _child_2).unwrap();
     let _child_2 = tree.link_node("child_3", _root).unwrap();
+    forest.add_tree("test_tree", tree);
     forest
 }
 
