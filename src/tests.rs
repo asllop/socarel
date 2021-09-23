@@ -3,7 +3,6 @@ use crate::tree::*;
 use crate::node::*;
 
 //TODO: add check for all iterators
-//TODO: check find nodes with and without unlinked nodes
 //TODO: check dialects (node with weight)
 
 fn forest_sample() -> Forest {
@@ -112,6 +111,9 @@ fn mutate_and_check_integrity() {
     let remove_me = tree.find_node(&["root_node", "child_2", "remove_me"]).expect("Could nod find modified node");
     assert_eq!(child_2_1, remove_me);
     tree.unlink_node(remove_me).expect("Could unlink node");
+    if let Some(_) = tree.find_node(&["root_node", "child_2", "remove_me"]) {
+        panic!("Found unlinked node");
+    }
     for (i, (n, _)) in tree.iterators().bfs().enumerate() {
         match i {
             0 => {
