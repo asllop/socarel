@@ -2,9 +2,6 @@ use crate::forest::*;
 use crate::tree::*;
 use crate::node::*;
 
-//TODO: add check for all iterators
-//TODO: check dialects (node with weight)
-
 fn forest_sample() -> Forest {
     let mut forest = <Forest>::new();
     let mut tree = <Tree>::new();
@@ -134,3 +131,74 @@ fn mutate_and_check_integrity() {
         }
     }
 }
+
+#[test]
+fn check_custom_node_content() {
+    #[derive(Debug)]
+    struct WeightNode {
+        content: String,
+        weight: u32
+    }
+
+    impl WeightNode {
+        fn get_weight(&self) -> u32 {
+            self.weight
+        }
+    }
+
+    impl NodeContent for WeightNode {
+        fn new(content: &str) -> Option<Self> {
+            let vec: Vec<&str> = content.split(':').collect();
+            if vec.len() == 2 {
+                match vec[0].trim().parse() {
+                    Ok(num) => Some(Self {
+                        content: String::from(vec[1]),
+                        weight: num
+                    }),
+                    Err(_) => None
+                }
+            }
+            else {
+                None
+            }
+        }
+
+        fn get_val(&self) -> &str {
+            &self.content
+        }
+
+        fn gen_content(&self) -> String {
+            format!("{}:{}", self.weight, self.content)
+        }
+    }
+
+    let mut tree = Tree::<WeightNode>::new();
+    let _root = tree.set_root("0:root_node").unwrap();
+    let _child_1 = tree.link_node("10:child_1", _root).unwrap();
+    let _child_1_1 = tree.link_node("5:child_1_1", _child_1).unwrap();
+    let _child_1_1_1 = tree.link_node("12:child_1_1_1", _child_1_1).unwrap();
+
+    for (i, (n, _)) in tree.iterators().sequential().enumerate() {
+        match i {
+            0 => {
+                if !n.get_content_ref().get_val().eq("root_node") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
+                if n.get_content_ref().get_weight() != 0 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
+            },
+            1 => {
+                if !n.get_content_ref().get_val().eq("child_1") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
+                if n.get_content_ref().get_weight() != 10 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
+            },
+            2 => {
+                if !n.get_content_ref().get_val().eq("child_1_1") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
+                if n.get_content_ref().get_weight() != 5 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
+            },
+            3 => {
+                if !n.get_content_ref().get_val().eq("child_1_1_1") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
+                if n.get_content_ref().get_weight() != 12 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
+            },
+            _ => {}
+        }
+    }
+}
+
+//TODO: add check for all iterators
