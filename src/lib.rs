@@ -1,3 +1,5 @@
+//TODO: docs
+
 mod node;
 mod tree;
 mod forest;
@@ -7,3 +9,5 @@ pub use node::*;
 pub use tree::*;
 pub use forest::*;
 pub use iter::*;
+
+//TODO: tests

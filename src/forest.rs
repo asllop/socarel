@@ -1,4 +1,5 @@
 use std::collections::HashMap as Map;
+use std::collections::hash_map::Iter;
 use crate::node::*;
 use crate::tree::*;
 
@@ -100,5 +101,15 @@ impl<T: NodeContent> Forest<T> {
         else {
             None
         }
+    }
+
+    /// Get forest iterator.
+    /// 
+    /// # Return
+    /// 
+    /// * Iterator, provides a tuple with tree_name<[`String`]>, tree_struct<[`Tree`]>.
+    /// 
+    pub fn iter(&self) -> Iter<String, Tree<T>> {
+        self.trees.iter()
     }
 }

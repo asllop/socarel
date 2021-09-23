@@ -65,6 +65,12 @@ fn main() {
         println!("Inv Post DFS Iter:");
         iterate(my_tree.iterators().inv_post_dfs());
     }
+
+    println!("-------------------------------------------------------");
+    println!("All trees:");
+    for (k,v) in forest.iter() {
+        println!("Tree name `{}` tree = {:#?}", k, v);
+    }
 }
 
 fn iterate<'a>(iter: impl Iterator<Item=(&'a Node, usize)>) {
