@@ -184,6 +184,7 @@ impl<T: NodeContent> Tree<T> {
         last_node_index
     }
 
+    //TODO: traverse starting by a certain node, not root. Pass node index as argument.
     /// Get iterators interface.
     /// 
     /// # Return
