@@ -3,6 +3,9 @@ name = "socarel"
 version = "0.4.0"
 authors = ["Andreu Santaren Llop <andreu.santaren@gmail.com>"]
 edition = "2018"
+description = "Fast and compact crate to generate, manipulate and traverse trees."
+license = "MIT"
+repository = "https://github.com/asllop/socarel"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
