@@ -3,7 +3,8 @@ use crate::node::*;
 
 /// Interface for tree iterators.
 pub struct IterInterface<'a, T: NodeContent> {
-    tree: &'a Tree<T>
+    tree: &'a Tree<T>,
+    initial_node: Option<usize>
 }
 
 impl<'a, T: NodeContent> IterInterface<'a, T> {
@@ -18,7 +19,21 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// * Iterator interface.
     ///
     pub fn new(tree: &'a Tree<T>) -> Self {
-        IterInterface { tree }
+        IterInterface { tree, initial_node: None }
+    }
+
+    /// Create iterator interface.
+    /// 
+    /// # Arguments
+    /// 
+    /// * `tree` - Reference to tree.
+    /// 
+    /// # Return
+    /// 
+    /// * Iterator interface.
+    ///
+    pub fn new_at(tree: &'a Tree<T>, initial_node: usize) -> Self {
+        IterInterface { tree, initial_node: Some(initial_node) }
     }
 
     /// Get sequential iterator.
@@ -30,7 +45,12 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// * Iterator.
     ///
     pub fn sequential(&self) -> SequentialIter<'a, T> {
-        SequentialIter::new(self.tree)
+        if let Some(initial_node) = self.initial_node {
+            SequentialIter::new(self.tree, initial_node)
+        }
+        else {
+            SequentialIter::new(self.tree, 0)
+        }
     }
 
     /// Get inverse sequential iterator.
@@ -42,7 +62,12 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// * Iterator.
     ///
     pub fn inv_sequential(&self) -> InvSequentialIter<'a, T> {
-        InvSequentialIter::new(self.tree)
+        if let Some(initial_node) = self.initial_node {
+            InvSequentialIter::new(self.tree, initial_node)
+        }
+        else {
+            InvSequentialIter::new(self.tree, self.tree.get_nodes_len() - 1)
+        }
     }
 
     /// Get BFS iterator.
@@ -52,7 +77,12 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// * Iterator.
     ///
     pub fn bfs(&self) -> BfsIter<'a, T> {
-        BfsIter::new(self.tree)
+        if let Some(initial_node) = self.initial_node {
+            BfsIter::new(self.tree, initial_node)
+        }
+        else {
+            BfsIter::new(self.tree, 0)
+        }
     }
 
     /// Get Inverse BFS iterator.
@@ -62,7 +92,12 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// * Iterator.
     ///
     pub fn inv_bfs(&self) -> InvBfsIter<'a, T> {
-        InvBfsIter::new(self.tree)
+        if let Some(initial_node) = self.initial_node {
+            InvBfsIter::new(self.tree, initial_node)
+        }
+        else {
+            InvBfsIter::new(self.tree, 0)
+        }
     }
 
     /// Get Pre-Order DFS iterator
@@ -72,7 +107,12 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// * Iterator.
     ///
     pub fn pre_dfs(&self) -> PreDfsIter<'a, T> {
-        PreDfsIter::new(self.tree)
+        if let Some(initial_node) = self.initial_node {
+            PreDfsIter::new(self.tree, initial_node)
+        }
+        else {
+            PreDfsIter::new(self.tree, 0)
+        }
     }
 
     /// Get Inverse Pre-Order DFS iterator
@@ -82,7 +122,12 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// * Iterator.
     ///
     pub fn inv_pre_dfs(&self) -> InvPreDfsIter<'a, T> {
-        InvPreDfsIter::new(self.tree)
+        if let Some(initial_node) = self.initial_node {
+            InvPreDfsIter::new(self.tree, initial_node)
+        }
+        else {
+            InvPreDfsIter::new(self.tree, 0)
+        }
     }
 
     /// Get Post-Order DFS iterator
@@ -92,7 +137,12 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// * Iterator.
     ///
     pub fn post_dfs(&self) -> PostDfsIter<'a, T> {
-        PostDfsIter::new(self.tree)
+        if let Some(initial_node) = self.initial_node {
+            PostDfsIter::new(self.tree, initial_node)
+        }
+        else {
+            PostDfsIter::new(self.tree, 0)
+        }
     }
 
     /// Get Inverse Post-Order DFS iterator
@@ -102,7 +152,12 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// * Iterator.
     ///
     pub fn inv_post_dfs(&self) -> InvPostDfsIter<'a, T> {
-        InvPostDfsIter::new(self.tree)
+        if let Some(initial_node) = self.initial_node {
+            InvPostDfsIter::new(self.tree, initial_node)
+        }
+        else {
+            InvPostDfsIter::new(self.tree, 0)
+        }
     }
 }
 
@@ -113,10 +168,10 @@ pub struct SequentialIter<'a, T: NodeContent> {
 }
 
 impl<'a, T: NodeContent> SequentialIter<'a, T> {
-    pub fn new(tree: &'a Tree<T>) -> Self {
+    pub fn new(tree: &'a Tree<T>, initial_node: usize) -> Self {
         Self {
             tree,
-            position: 0
+            position: initial_node
         }
     }
 }
@@ -143,11 +198,11 @@ pub struct InvSequentialIter<'a, T: NodeContent> {
 }
 
 impl<'a, T: NodeContent> InvSequentialIter<'a, T> {
-    pub fn new(tree: &'a Tree<T>) -> Self {
+    pub fn new(tree: &'a Tree<T>, initial_node: usize) -> Self {
         if tree.get_nodes_len() > 0 {
             Self {
                 tree,
-                position: tree.get_nodes_len() - 1,
+                position: if initial_node == usize::MAX { tree.get_nodes_len() - 1 } else { initial_node },
                 finished: false
             }
         }
@@ -193,11 +248,11 @@ pub struct BfsIter<'a, T: NodeContent> {
 }
 
 impl<'a, T: NodeContent> BfsIter<'a, T> {
-    pub fn new(tree: &'a Tree<T>) -> Self {
+    pub fn new(tree: &'a Tree<T>, initial_node: usize) -> Self {
         Self {
             tree,
             cua: vec!(),
-            next: 0,
+            next: initial_node,
             finished: false
         }
     }
@@ -244,11 +299,11 @@ pub struct InvBfsIter<'a, T: NodeContent> {
 }
 
 impl<'a, T: NodeContent> InvBfsIter<'a, T> {
-    pub fn new(tree: &'a Tree<T>) -> Self {
+    pub fn new(tree: &'a Tree<T>, initial_node: usize) -> Self {
         Self {
             tree,
             cua: vec!(),
-            next: 0,
+            next: initial_node,
             finished: false
         }
     }
@@ -294,11 +349,11 @@ pub struct PreDfsIter<'a, T: NodeContent> {
 }
 
 impl<'a, T: NodeContent> PreDfsIter<'a, T> {
-    pub fn new(tree: &'a Tree<T>) -> Self {
+    pub fn new(tree: &'a Tree<T>, initial_node: usize) -> Self {
         Self {
             tree,
             pila: vec!(),
-            next: 0,
+            next: initial_node,
             finished: false
         }
     }
@@ -344,11 +399,11 @@ pub struct InvPreDfsIter<'a, T: NodeContent> {
 }
 
 impl<'a, T: NodeContent> InvPreDfsIter<'a, T> {
-    pub fn new(tree: &'a Tree<T>) -> Self {
+    pub fn new(tree: &'a Tree<T>, initial_node: usize) -> Self {
         Self {
             tree,
             pila: vec!(),
-            next: 0,
+            next: initial_node,
             finished: false
         }
     }
@@ -392,10 +447,10 @@ pub struct PostDfsIter<'a, T: NodeContent> {
 }
 
 impl<'a, T: NodeContent> PostDfsIter<'a, T> {
-    pub fn new(tree: &'a Tree<T>) -> Self {
+    pub fn new(tree: &'a Tree<T>, initial_node: usize) -> Self {
         Self {
             tree,
-            pila: vec!((0, true))
+            pila: vec!((initial_node, true))
         }
     }
 }
@@ -445,10 +500,10 @@ pub struct InvPostDfsIter<'a, T: NodeContent> {
 }
 
 impl<'a, T: NodeContent> InvPostDfsIter<'a, T> {
-    pub fn new(tree: &'a Tree<T>) -> Self {
+    pub fn new(tree: &'a Tree<T>, initial_node: usize) -> Self {
         Self {
             tree,
-            pila: vec!((0, true))
+            pila: vec!((initial_node, true))
         }
     }
 }
@@ -489,3 +544,5 @@ impl<'a, T: NodeContent> Iterator for InvPostDfsIter<'a, T> {
         None
     }
 }
+
+//TODO: implement in-order DFS and inverse in-order DFS iterators (https://en.wikipedia.org/wiki/Tree_traversal)

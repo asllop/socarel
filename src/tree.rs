@@ -184,7 +184,6 @@ impl<T: NodeContent> Tree<T> {
         last_node_index
     }
 
-    //TODO: traverse starting by a certain node, not root. Pass node index as argument.
     /// Get iterators interface.
     /// 
     /// # Return
@@ -193,6 +192,20 @@ impl<T: NodeContent> Tree<T> {
     ///
     pub fn iterators(&self) -> IterInterface<T> {
         IterInterface::new(self)
+    }
+
+    /// Get iterators interface defining initial node to start traversing.
+    /// 
+    /// # Arguments
+    /// 
+    /// * `initial_node` - Initial node index.
+    /// 
+    /// # Return
+    /// 
+    /// * Iterators interface.
+    ///
+    pub fn iterators_at(&self, initial_node: usize) -> IterInterface<T> {
+        IterInterface::new_at(self, initial_node)
     }
 
     /// Get reference to nodes array.

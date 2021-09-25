@@ -3,7 +3,7 @@
 //! `Socarel` is a library to generate, manipulate and traverse trees.
 //! 
 //! It provides iterators for **eight** different traversal algorithms.<br>
-//! Add and remove nodes in **O(1)** complexity. Find nodes in a path in **O(p)** complexity (being *p* the path lenght).<br>
+//! Add and remove nodes in **O(1)** complexity. Find nodes in a path in **O(p)** complexity (*p* being the path lenght).<br>
 //! Supports **custom node** models to create complex tree formats.<br>
 //! 
 //! # Examples
@@ -97,7 +97,7 @@
 //! # let _child_1 = tree.link_node("child_1", _root_node).unwrap();
 //! # let _child_2 = tree.link_node("child_2", _root_node).unwrap();
 //! # let _child_3 = tree.link_node("child_3", _root_node).unwrap();
-//! for (node, node_index) in tree.iterators().bfs() {
+//! for (node, node_index) in tree.iterators().bfs(0) {
 //!     // ...
 //! }
 //! ```
@@ -227,7 +227,7 @@
 //! let _root = tree.set_root("0:my root node").unwrap();
 //! let _node_1 = tree.link_node("10:my node 1", _root).unwrap();
 //! let _node_1_1 = tree.link_node("100:child of my node 1", _node_1).unwrap();
-//! for (node, _) in tree.iterators().bfs() {
+//! for (node, _) in tree.iterators().bfs(0) {
 //!     let cref = node.get_content_ref();
 //!     println!("Node content = `{}` weight = {}", cref.get_val(), cref.get_weight());
 //! }

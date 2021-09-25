@@ -1,4 +1,4 @@
-use socarel::{Forest, NodeContent, Node};
+use socarel::{Forest, Tree, Node, NodeContent};
 
 fn main() {
     let mut forest = <Forest>::new();
@@ -45,25 +45,6 @@ fn main() {
 
         let _found_root = my_tree.find_node(&["my root node"]);
         println!("find '/my root node/' index = {:#?}", _found_root);
-
-        println!("-------------------------------------------------------");
-
-        println!("Sequential Iter:");
-        iterate(my_tree.iterators().sequential());
-        println!("Inv Sequential Iter:");
-        iterate(my_tree.iterators().inv_sequential());
-        println!("BFS Iter:");
-        iterate(my_tree.iterators().bfs());
-        println!("Inv BFS Iter:");
-        iterate(my_tree.iterators().inv_bfs());
-        println!("Pre DFS Iter:");
-        iterate(my_tree.iterators().pre_dfs());
-        println!("Inv Pre DFS Iter:");
-        iterate(my_tree.iterators().inv_pre_dfs());
-        println!("Post DFS Iter:");
-        iterate(my_tree.iterators().post_dfs());
-        println!("Inv Post DFS Iter:");
-        iterate(my_tree.iterators().inv_post_dfs());
     }
 
     println!("-------------------------------------------------------");
@@ -71,6 +52,35 @@ fn main() {
     for (k,v) in forest.iter() {
         println!("Tree name `{}` tree = {:#?}", k, v);
     }
+
+    println!("-------------------------------------------------------");
+
+    let mut tree = <Tree>::new();
+    let _a = tree.set_root("A").unwrap();
+    let _b = tree.link_node("B", _a).unwrap();
+    let _c = tree.link_node("C", _a).unwrap();
+    let _d = tree.link_node("D", _b).unwrap();
+    let _e = tree.link_node("E", _b).unwrap();
+    let _f = tree.link_node("F", _c).unwrap();
+    let _g = tree.link_node("G", _c).unwrap();
+    let _h = tree.link_node("H", _e).unwrap();
+
+    println!("--- Sequential Iter:");
+    iterate(tree.iterators().sequential());
+    println!("--- Inv Sequential Iter:");
+    iterate(tree.iterators().inv_sequential());
+    println!("--- BFS Iter:");
+    iterate(tree.iterators().bfs());
+    println!("--- Inv BFS Iter:");
+    iterate(tree.iterators().inv_bfs());
+    println!("--- Pre DFS Iter:");
+    iterate(tree.iterators().pre_dfs());
+    println!("--- Inv Pre DFS Iter:");
+    iterate(tree.iterators().inv_pre_dfs());
+    println!("--- Post DFS Iter:");
+    iterate(tree.iterators().post_dfs());
+    println!("--- Inv Post DFS Iter:");
+    iterate(tree.iterators().inv_post_dfs());
 }
 
 fn iterate<'a>(iter: impl Iterator<Item=(&'a Node, usize)>) {
