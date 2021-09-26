@@ -271,4 +271,32 @@ fn test_inv_bfs_iter() {
     }
 }
 
+#[test]
+fn test_post_dfs_iter() {
+    let tree = tree_sample();
+    let nodes_in_order = ["D", "H", "E", "B", "F", "G", "C", "A"];
+    for (i, (n, _)) in tree.iterators().post_dfs().enumerate() {
+        if nodes_in_order.len() > i {
+            assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
+        }
+        else {
+            panic!("Wrong node index");
+        }
+    }
+}
+
+#[test]
+fn test_inv_post_dfs_iter() {
+    let tree = tree_sample();
+    let nodes_in_order = ["G", "F", "C", "H", "E", "D", "B", "A"];
+    for (i, (n, _)) in tree.iterators().inv_post_dfs().enumerate() {
+        if nodes_in_order.len() > i {
+            assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
+        }
+        else {
+            panic!("Wrong node index");
+        }
+    }
+}
+
 //TODO: add check for all iterators
