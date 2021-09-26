@@ -215,11 +215,10 @@ fn tree_sample() -> Tree {
     tree
 }
 
-#[test]
-fn test_seq_iter() {
-    let tree = tree_sample();
-    let nodes_in_order = ["A", "B", "C", "D", "E", "F", "G", "H"];
-    for (i, (n, _)) in tree.iterators().sequential().enumerate() {
+fn test_iterator<'a>(iter: impl Iterator<Item=(&'a Node, usize)>, nodes_in_order: &[&str]) {
+    let mut last_i = 0;
+    for (i, (n, _)) in iter.enumerate() {
+        last_i = i;
         if nodes_in_order.len() > i {
             assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
         }
@@ -227,104 +226,49 @@ fn test_seq_iter() {
             panic!("Wrong node index");
         }
     }
+    if last_i < nodes_in_order.len() - 1 {
+        panic!("Array of nodes_in_order has more nodes than offered by iterator");
+    }
+}
+
+#[test]
+fn test_seq_iter() {
+    test_iterator(tree_sample().iterators().sequential(), &["A", "B", "C", "D", "E", "F", "G", "H"]);
 }
 
 #[test]
 fn test_inv_seq_iter() {
-    let tree = tree_sample();
-    let nodes_in_order = ["H", "G", "F", "E", "D", "C", "B", "A"];
-    for (i, (n, _)) in tree.iterators().inv_sequential().enumerate() {
-        if nodes_in_order.len() > i {
-            assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
-        }
-        else {
-            panic!("Wrong node index");
-        }
-    }
+    test_iterator(tree_sample().iterators().inv_sequential(), &["H", "G", "F", "E", "D", "C", "B", "A"]);
 }
 
 #[test]
 fn test_bfs_iter() {
-    let tree = tree_sample();
-    let nodes_in_order = ["A", "B", "C", "D", "E", "F", "G", "H"];
-    for (i, (n, _)) in tree.iterators().bfs().enumerate() {
-        if nodes_in_order.len() > i {
-            assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
-        }
-        else {
-            panic!("Wrong node index");
-        }
-    }
+    test_iterator(tree_sample().iterators().bfs(), &["A", "B", "C", "D", "E", "F", "G", "H"]);
 }
 
 #[test]
 fn test_inv_bfs_iter() {
-    let tree = tree_sample();
-    let nodes_in_order = ["A", "C", "B", "G", "F", "E", "D", "H"];
-    for (i, (n, _)) in tree.iterators().inv_bfs().enumerate() {
-        if nodes_in_order.len() > i {
-            assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
-        }
-        else {
-            panic!("Wrong node index");
-        }
-    }
+    test_iterator(tree_sample().iterators().inv_bfs(), &["A", "C", "B", "G", "F", "E", "D", "H"]);
 }
 
 #[test]
 fn test_pre_dfs_iter() {
-    let tree = tree_sample();
-    let nodes_in_order = ["A", "B", "D", "E", "H", "C", "F", "G"];
-    for (i, (n, _)) in tree.iterators().pre_dfs().enumerate() {
-        if nodes_in_order.len() > i {
-            assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
-        }
-        else {
-            panic!("Wrong node index");
-        }
-    }
+    test_iterator(tree_sample().iterators().pre_dfs(), &["A", "B", "D", "E", "H", "C", "F", "G"]);
 }
 
 #[test]
 fn test_inv_pre_dfs_iter() {
-    let tree = tree_sample();
-    let nodes_in_order = ["A", "C", "G", "F", "B", "E", "H", "D"];
-    for (i, (n, _)) in tree.iterators().inv_pre_dfs().enumerate() {
-        if nodes_in_order.len() > i {
-            assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
-        }
-        else {
-            panic!("Wrong node index");
-        }
-    }
+    test_iterator(tree_sample().iterators().inv_pre_dfs(), &["A", "C", "G", "F", "B", "E", "H", "D"]);
 }
 
 #[test]
 fn test_post_dfs_iter() {
-    let tree = tree_sample();
-    let nodes_in_order = ["D", "H", "E", "B", "F", "G", "C", "A"];
-    for (i, (n, _)) in tree.iterators().post_dfs().enumerate() {
-        if nodes_in_order.len() > i {
-            assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
-        }
-        else {
-            panic!("Wrong node index");
-        }
-    }
+    test_iterator(tree_sample().iterators().post_dfs(), &["D", "H", "E", "B", "F", "G", "C", "A"]);
 }
 
 #[test]
 fn test_inv_post_dfs_iter() {
-    let tree = tree_sample();
-    let nodes_in_order = ["G", "F", "C", "H", "E", "D", "B", "A"];
-    for (i, (n, _)) in tree.iterators().inv_post_dfs().enumerate() {
-        if nodes_in_order.len() > i {
-            assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
-        }
-        else {
-            panic!("Wrong node index");
-        }
-    }
+    test_iterator(tree_sample().iterators().inv_post_dfs(), &["G", "F", "C", "H", "E", "D", "B", "A"]);
 }
 
-//TODO: add check for all iterators starting by a node (not root)
+//TODO: add test for all iterators starting by a node (not root)
