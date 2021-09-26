@@ -201,8 +201,6 @@ fn check_custom_node_content() {
     }
 }
 
-//TODO: add check for all iterators
-
 // Tree like https://en.wikipedia.org/wiki/Breadth-first_search#/media/File:Animated_BFS.gif
 fn tree_sample() -> Tree {
     let mut tree = <Tree>::new();
@@ -215,6 +213,34 @@ fn tree_sample() -> Tree {
     let _g = tree.link_node("G", _c).unwrap();
     let _h = tree.link_node("H", _e).unwrap();
     tree
+}
+
+#[test]
+fn test_seq_iter() {
+    let tree = tree_sample();
+    let nodes_in_order = ["A", "B", "C", "D", "E", "F", "G", "H"];
+    for (i, (n, _)) in tree.iterators().sequential().enumerate() {
+        if nodes_in_order.len() > i {
+            assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
+        }
+        else {
+            panic!("Wrong node index");
+        }
+    }
+}
+
+#[test]
+fn test_inv_seq_iter() {
+    let tree = tree_sample();
+    let nodes_in_order = ["H", "G", "F", "E", "D", "C", "B", "A"];
+    for (i, (n, _)) in tree.iterators().inv_sequential().enumerate() {
+        if nodes_in_order.len() > i {
+            assert_eq!(n.get_content_ref().get_val(), nodes_in_order[i]);
+        }
+        else {
+            panic!("Wrong node index");
+        }
+    }
 }
 
 #[test]
@@ -244,3 +270,5 @@ fn test_inv_bfs_iter() {
         }
     }
 }
+
+//TODO: add check for all iterators
