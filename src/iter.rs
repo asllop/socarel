@@ -24,6 +24,8 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
 
     /// Create iterator interface.
     /// 
+    /// If `initial_node` contains an invalid index, it uses the default starting node.
+    /// 
     /// # Arguments
     /// 
     /// * `tree` - Reference to tree.
@@ -33,7 +35,12 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
     /// * Iterator interface.
     ///
     pub fn new_at(tree: &'a Tree<T>, initial_node: usize) -> Self {
-        IterInterface { tree, initial_node: Some(initial_node) }
+        if tree.get_nodes_len() > initial_node {
+            IterInterface { tree, initial_node: Some(initial_node) }
+        }
+        else {
+            Self::new(tree)
+        }
     }
 
     /// Get sequential iterator.

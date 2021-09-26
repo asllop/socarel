@@ -196,6 +196,8 @@ impl<T: NodeContent> Tree<T> {
 
     /// Get iterators interface defining initial node to start traversing.
     /// 
+    /// If `initial_node` contains an invalid index, it just ignores it and behaves like [`iterators()`][`Tree::iterators()`].
+    /// 
     /// # Arguments
     /// 
     /// * `initial_node` - Initial node index.
