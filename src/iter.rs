@@ -553,3 +553,7 @@ impl<'a, T: NodeContent> Iterator for InvPostDfsIter<'a, T> {
 }
 
 //TODO: implement in-order DFS and inverse in-order DFS iterators (https://en.wikipedia.org/wiki/Tree_traversal)
+// https://stackoverflow.com/questions/23778489/in-order-tree-traversal-for-non-binary-trees
+
+//TODO: config the in-order strategy for not binary trees: group last or group first.
+//TODO: define an additional in-order algorithm for n-ary trees: visit the middle for each pair, so we can visit one nore more than once.

@@ -13,6 +13,8 @@ As with any crate, generate the docs using cargo:
  cargo doc --open
  ```
 
+Or visit [docs.rs](https://docs.rs/socarel)
+
 ## Crate
 
 Download the crate at [crates.io](https://crates.io/crates/socarel)

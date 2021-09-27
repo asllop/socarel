@@ -142,7 +142,7 @@ impl<T: NodeContent> Tree<T> {
         None
     }
 
-    /// Find node in the try by content.
+    /// Find node in the tree by content.
     /// 
     /// The complexity of this operation is O(p), where `p` is the number of elements in the path.
     /// 
@@ -234,7 +234,7 @@ impl<T: NodeContent> Tree<T> {
     /*
     /// Obtain a copy of the current tree without unlinked nodes and updating node indexes.
     /// 
-    /// Node indexes of the old tree are no longer valid in the new tree returned by this function.
+    /// Node indexes of the old tree may be no longer valid in the new tree returned by this function.
     /// 
     /// # Return
     /// 
