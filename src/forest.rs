@@ -62,7 +62,7 @@ impl<T: NodeContent> Forest<T> {
     /// * An [`Option`] with the removed tree.
     /// 
     pub fn remove_tree(&mut self, name: &str) -> Option<Tree<T>> {
-        return self.trees.remove(name);
+        self.trees.remove(name)
     }
 
     /// Get tree reference.
@@ -76,12 +76,7 @@ impl<T: NodeContent> Forest<T> {
     /// * An [`Option`] with the tree reference.
     /// 
     pub fn get_tree(&self, name: &str) -> Option<&Tree<T>> {
-        if let Some(t) = self.trees.get(name) {
-            Some(t)
-        }
-        else {
-            None
-        }
+        self.trees.get(name)
     }
 
     /// Get mutable tree reference.
@@ -95,12 +90,7 @@ impl<T: NodeContent> Forest<T> {
     /// * An [`Option`] with the mut tree reference.
     /// 
     pub fn get_mut_tree(&mut self, name: &str) -> Option<&mut Tree<T>> {
-        if let Some(t) = self.trees.get_mut(name) {
-            Some(t)
-        }
-        else {
-            None
-        }
+        self.trees.get_mut(name)
     }
 
     /// Get forest iterator.
