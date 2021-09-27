@@ -117,7 +117,7 @@ impl<T: NodeContent> Tree<T> {
 
     /// Unlink node. It doesn't remove node from the tree, it just disconnects it from parent.
     /// 
-    /// This process is O(l) complexity, where `l` is the number of nodes of the same level of `node_index`.
+    /// This process is O(1) complexity.
     /// 
     /// # Arguments
     /// 

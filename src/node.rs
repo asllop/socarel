@@ -75,7 +75,7 @@ pub struct Node<T: NodeContent = RawNode> {
     child_map: Map<String, usize>,
     /// Index of current node in the parent [`children`][`Node::children`] array.
     parents_children_pos: Option<usize>,
-    /// Array that contains indexes of of children nodes.
+    /// Array that contains indexes of children nodes.
     children: Vec<usize>
 }
 
