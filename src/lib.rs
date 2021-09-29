@@ -232,6 +232,9 @@
 //!     println!("Node content = `{}` weight = {}", cref.get_val(), cref.get_weight());
 //! }
 //! ```
+//! 
+//! Note that in this case, [`NodeContent::get_val()`] is not returning the same value passed to [`NodeContent::new()`]. If you are used to the default node content, [`RawNode`], you could have thought that it is always the same, but it is not, it depends on the specific [`NodeContent`] implementation you have in your tree.<br>
+//! And that's the ultimate reason why we have [`NodeContent::gen_content()`], to be able to generate the original content passed to `new`.
 
 mod node;
 mod tree;

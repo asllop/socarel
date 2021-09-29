@@ -142,7 +142,22 @@ impl<T: NodeContent> Tree<T> {
         None
     }
 
-    //TODO: deprecate find_node, create find_path, starts by any node and the path doesn't include the root.
+    //TODO: starts by any node and the path doesn't include the root.
+    /// Find a node in the tree by its path.
+    /// 
+    /// The complexity of this operation is O(p), where *p* is the number of elements in the path.
+    /// 
+    /// # Arguments
+    /// 
+    /// * `initial_node` - Node index where to start.
+    /// * `path` - Path of node contents _(\*)_, not including `initial_node`.
+    /// 
+    /// _(\*)_: Path contents are compared with [`NodeContent::get_val()`], that is not necessarily equal to the content passed to [`NodeContent::new()`] when the node was created/updated. It is if you use [`RawNode`], but it depends on the specific [`NodeContent`] implementation you are using in your tree.
+    /// 
+    /// # Return
+    /// 
+    /// * An [`Option`] with the node index.
+    ///
     pub fn find_path(&self, initial_node: usize, path: &[&str]) -> Option<usize> {
         Some(0)
     }
