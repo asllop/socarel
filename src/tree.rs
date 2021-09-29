@@ -71,7 +71,9 @@ impl<T: NodeContent> Tree<T> {
         None
     }
 
-    /// Get reference to node content.
+    /// Unlink node. It doesn't remove node from the tree, it just disconnects it from parent.
+    /// 
+    /// This process is O(1) complexity.
     /// 
     /// # Arguments
     /// 
@@ -79,15 +81,23 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the node content reference.
-    /// 
-    pub fn get_node_content(&self, node_index: usize) -> Option<&T> {
-        if node_index < self.nodes.len() {
-            return Some(self.nodes[node_index].get_content_ref());
+    /// * An [`Option`] with the node index.
+    ///
+    pub fn unlink_node(&mut self, node_index: usize) -> Option<usize> {
+        if self.nodes.len() > node_index {
+            if let Some(parent) = self.nodes[node_index].get_parent_position() {
+                if let Some(parents_children_pos) = self.nodes[node_index].get_parents_children_pos() {
+                    if self.nodes[parent].get_num_chuildren() > parents_children_pos {
+                        let node_content = String::from(self.nodes[node_index].get_content_ref().get_val());
+                        self.nodes[parent].remove_child(&node_content, parents_children_pos);
+                        return Some(node_index);
+                    }
+                }
+            }
         }
         None
     }
-    
+
     /// Overwrite node content. It must exist.
     /// 
     /// # Arguments
@@ -115,9 +125,7 @@ impl<T: NodeContent> Tree<T> {
         None
     }
 
-    /// Unlink node. It doesn't remove node from the tree, it just disconnects it from parent.
-    /// 
-    /// This process is O(1) complexity.
+    /// Get reference to node content.
     /// 
     /// # Arguments
     /// 
@@ -125,19 +133,11 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the node index.
-    ///
-    pub fn unlink_node(&mut self, node_index: usize) -> Option<usize> {
-        if self.nodes.len() > node_index {
-            if let Some(parent) = self.nodes[node_index].get_parent_position() {
-                if let Some(parents_children_pos) = self.nodes[node_index].get_parents_children_pos() {
-                    if self.nodes[parent].get_num_chuildren() > parents_children_pos {
-                        let node_content = String::from(self.nodes[node_index].get_content_ref().get_val());
-                        self.nodes[parent].remove_child(&node_content, parents_children_pos);
-                        return Some(node_index);
-                    }
-                }
-            }
+    /// * An [`Option`] with the node content reference.
+    /// 
+    pub fn get_node_content(&self, node_index: usize) -> Option<&T> {
+        if node_index < self.nodes.len() {
+            return Some(self.nodes[node_index].get_content_ref());
         }
         None
     }
@@ -230,6 +230,15 @@ impl<T: NodeContent> Tree<T> {
         self.nodes.len()
     }
 
+    //TODO: link an existing node to a different parent (it can be an unlinked node -> we need a flag in the node to know it is already unlinked).
+    /*
+    pub fn relink_node(&mut self, node_index: usize, parent_node_index: usize) -> Option<usize> {
+        None
+    }
+    */
+
+    // SLOW OPERATIONS: usually O(n) complexity.
+
     // TODO
     /*
     /// Obtain a copy of the current tree without unlinked nodes and updating node indexes.
@@ -244,4 +253,11 @@ impl<T: NodeContent> Tree<T> {
         Tree::new()
     }
     */
+
+    //TODO: append one tree to another. Works like link_node, but links a whole tree instead of a single node.
+    /*
+    pub fn append_tree(&mut self, tree: &Tree<T>, parent_node_index: usize) -> Option<usize> {
+        None
+    }
+     */
 }
