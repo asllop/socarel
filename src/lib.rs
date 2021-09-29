@@ -114,10 +114,10 @@
 //! # let _root_node = tree.set_root("root_node").unwrap();
 //! # let _child_1 = tree.link_node("child_1", _root_node).unwrap();
 //! # let _child_1_1 = tree.link_node("child_1_1", _child_1).unwrap();
-//! let _node = tree.find_node(&["root_node", "child_1", "child_1_1"]).unwrap();
+//! let _node = tree.find_path(_root_node, &["child_1", "child_1_1"]).unwrap();
 //! ```
 //! 
-//! Using [`Tree::find_node()`] is always better when possible, because the complexity is O(p) (*p* = path length) while the complexity of most traversal algorithms is O(n) (*n* = number of nodes in the tree).
+//! Using [`Tree::find_path()`] is always better when possible, because the complexity is O(p) (*p* = path length) while the complexity of most traversal algorithms is O(n) (*n* = number of nodes in the tree).
 //! 
 //! ## Custom Nodes
 //! 

@@ -142,9 +142,28 @@ impl<T: NodeContent> Tree<T> {
         None
     }
 
+    //TODO: deprecate find_node, create find_path, starts by any node and the path doesn't include the root.
+    pub fn find_path(&self, initial_node: usize, path: &[&str]) -> Option<usize> {
+        Some(0)
+    }
+
+    #[deprecated(since="0.5.0", note="find_node will be removed in the next major release, please use `find_path` instead")]
     /// Find node in the tree by content.
     /// 
     /// The complexity of this operation is O(p), where `p` is the number of elements in the path.
+    /// 
+    /// # Deprecated:
+    /// 
+    /// Please use [`find_path`][`Tree::find_path()`] instead. To update, please look at the following example that demonstrates an equivalent usage:
+    /// 
+    /// ```
+    /// # use socarel::*;
+    /// # let tree = <Tree>::new();
+    /// tree.find_node(&["root", "child_1", "child_1_1"]);
+    /// // Is equivalent to:
+    /// tree.find_path(0, &["child_1", "child_1_1"]);
+    /// // Note that, with find_path, we specify the node where to start finding and the first postion in the path is not the root.
+    /// ```
     /// 
     /// # Arguments
     /// 
@@ -231,16 +250,13 @@ impl<T: NodeContent> Tree<T> {
     }
 
     //TODO: link an existing node to a different parent (it can be an unlinked node -> we need a flag in the node to know it is already unlinked).
-    /*
     pub fn relink_node(&mut self, node_index: usize, parent_node_index: usize) -> Option<usize> {
-        None
+        Some(0)
     }
-    */
 
     // SLOW OPERATIONS: usually O(n) complexity.
 
     // TODO
-    /*
     /// Obtain a copy of the current tree without unlinked nodes and updating node indexes.
     /// 
     /// Node indexes of the old tree may be no longer valid in the new tree returned by this function.
@@ -252,12 +268,9 @@ impl<T: NodeContent> Tree<T> {
     pub fn regenerate(&self) -> Self {
         Tree::new()
     }
-    */
 
     //TODO: append one tree to another. Works like link_node, but links a whole tree instead of a single node.
-    /*
     pub fn append_tree(&mut self, tree: &Tree<T>, parent_node_index: usize) -> Option<usize> {
-        None
+        Some(0)
     }
-     */
 }
