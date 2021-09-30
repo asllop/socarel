@@ -1,6 +1,7 @@
 use crate::forest::*;
 use crate::tree::*;
 use crate::node::*;
+use crate::iter::*;
 
 fn forest_sample() -> Forest {
     let mut forest = <Forest>::new();
@@ -271,4 +272,56 @@ fn test_inv_post_dfs_iter() {
     test_iterator(tree_sample().iterators().inv_post_dfs(), &["G", "F", "C", "H", "E", "D", "B", "A"]);
 }
 
-//TODO: add test for all iterators starting by a node (not root)
+#[test]
+fn test_children_iter() {
+    test_iterator(tree_sample().iterators().children(), &["B", "C"]);
+}
+
+fn index_of_b_node() -> usize {
+    tree_sample().find_node(&["A", "B"]).unwrap()
+}
+
+#[test]
+fn test_seq_iter_at() {
+    test_iterator(tree_sample().iterators_at(index_of_b_node()).sequential(), &["B", "C", "D", "E", "F", "G", "H"]);
+}
+
+#[test]
+fn test_inv_seq_iter_at() {
+    test_iterator(tree_sample().iterators_at(index_of_b_node()).inv_sequential(), &["B", "A"]);
+}
+
+#[test]
+fn test_bfs_iter_at() {
+    test_iterator(tree_sample().iterators_at(index_of_b_node()).bfs(), &["B", "D", "E", "H"]);
+}
+
+#[test]
+fn test_inv_bfs_iter_at() {
+    test_iterator(tree_sample().iterators_at(index_of_b_node()).inv_bfs(), &["B", "E", "D", "H"]);
+}
+
+#[test]
+fn test_pre_dfs_iter_at() {
+    test_iterator(tree_sample().iterators_at(index_of_b_node()).pre_dfs(), &["B", "D", "E", "H"]);
+}
+
+#[test]
+fn test_inv_pre_dfs_iter_at() {
+    test_iterator(tree_sample().iterators_at(index_of_b_node()).inv_pre_dfs(), &["B", "E", "H", "D"]);
+}
+
+#[test]
+fn test_post_dfs_iter_at() {
+    test_iterator(tree_sample().iterators_at(index_of_b_node()).post_dfs(), &["D", "H", "E", "B"]);
+}
+
+#[test]
+fn test_inv_post_dfs_iter_at() {
+    test_iterator(tree_sample().iterators_at(index_of_b_node()).inv_post_dfs(), &["H", "E", "D", "B"]);
+}
+
+#[test]
+fn test_children_iter_at() {
+    test_iterator(tree_sample().iterators_at(index_of_b_node()).children(), &["D", "E"]);
+}

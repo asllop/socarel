@@ -4,6 +4,7 @@ use std::collections::HashMap as Map;
 
 /// Trait to define structs that model a node content.
 pub trait NodeContent {
+    //TODO return a Result with wither Self or an error (impl Error trait).
     /// Constructor.
     /// 
     /// # Arguments
@@ -270,6 +271,7 @@ impl<T: NodeContent> Node<T> {
         self.children[node_index] = usize::MAX;
     }
 
+    //TODO: return a Result
     /// Update child map.
     /// 
     /// # Arguments

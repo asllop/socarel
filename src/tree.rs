@@ -20,6 +20,7 @@ impl<T: NodeContent> Tree<T> {
         }
     }
 
+    //TODO: return a Result
     /// Set root node.
     /// 
     /// # Arguments
@@ -41,6 +42,7 @@ impl<T: NodeContent> Tree<T> {
         None
     }
 
+    //TODO: return a Result
     /// Create new node and link it to its parent.
     /// 
     /// # Arguments
@@ -71,7 +73,8 @@ impl<T: NodeContent> Tree<T> {
         }
         None
     }
-
+    
+    //TODO: return a Result
     /// Unlink node. It doesn't remove node from the tree, it just disconnects it from parent.
     /// 
     /// This process is O(1) complexity.
@@ -99,6 +102,7 @@ impl<T: NodeContent> Tree<T> {
         None
     }
 
+    //TODO: return a Result
     /// Overwrite node content. It must exist.
     /// 
     /// # Arguments
@@ -144,7 +148,8 @@ impl<T: NodeContent> Tree<T> {
         None
     }
 
-    //TODO: starts by any node and the path doesn't include the root.
+    //TODO: starts by any node and the path doesn't include the root
+    //TODO: return a Result
     /// Find a node in the tree by its path.
     /// 
     /// The complexity of this operation is O(p), where *p* is the number of elements in the path.
@@ -267,6 +272,7 @@ impl<T: NodeContent> Tree<T> {
     }
 
     //TODO: link an existing node to a different parent (it can be an unlinked node -> we need a flag in the node to know it is already unlinked).
+    //TODO: return a Result
     pub fn relink_node(&mut self, node_index: usize, parent_node_index: usize) -> Option<usize> {
         Some(0)
     }
@@ -287,6 +293,7 @@ impl<T: NodeContent> Tree<T> {
     }
 
     //TODO: append one tree to another. Works like link_node, but links a whole tree instead of a single node.
+    //TODO: return a Result
     pub fn append_tree(&mut self, tree: &Tree<T>, parent_node_index: usize) -> Option<usize> {
         Some(0)
     }
