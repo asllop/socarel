@@ -166,6 +166,21 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
             InvPostDfsIter::new(self.tree, 0)
         }
     }
+
+    /// Get children iterator
+    /// 
+    /// # Return
+    /// 
+    /// * Iterator.
+    ///
+    pub fn children(&self) -> ChildrenIter<'a, T> {
+        if let Some(initial_node) = self.initial_node {
+            ChildrenIter::new(self.tree, initial_node)
+        }
+        else {
+            ChildrenIter::new(self.tree, 0)
+        }
+    }
 }
 
 /// Simple Iterator, in sequential order.
@@ -549,6 +564,38 @@ impl<'a, T: NodeContent> Iterator for InvPostDfsIter<'a, T> {
             }
         }
         None
+    }
+}
+
+// Iterate over all children of a node
+pub struct ChildrenIter<'a, T: NodeContent> {
+    tree: &'a Tree<T>,
+    initial_node: usize,
+    pos: usize
+}
+
+impl<'a, T: NodeContent> ChildrenIter<'a, T> {
+    pub fn new(tree: &'a Tree<T>, initial_node: usize) -> Self {
+        Self {
+            tree,
+            initial_node,
+            pos: 0
+        }
+    }
+}
+
+impl<'a, T: NodeContent> Iterator for ChildrenIter<'a, T> {
+    type Item = (&'a Node<T>, usize);
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.tree.get_nodes_ref()[self.initial_node].get_children_ref().len() > self.pos {
+            let child_index = self.tree.get_nodes_ref()[self.initial_node].get_children_ref()[self.pos];
+            let child = &self.tree.get_nodes_ref()[child_index];
+            self.pos += 1;
+            Some((child, child_index))
+        }
+        else {
+            None
+        }
     }
 }
 

@@ -81,6 +81,8 @@ fn main() {
     iterate(tree.iterators().post_dfs());
     println!("--- Inv Post DFS Iter:");
     iterate(tree.iterators().inv_post_dfs());
+    println!("--- Children Iter (from 'C'):");
+    iterate(tree.iterators_at(_c).children());
 }
 
 fn iterate<'a>(iter: impl Iterator<Item=(&'a Node, usize)>) {

@@ -62,6 +62,7 @@ impl<T: NodeContent> Tree<T> {
                 new_node.set_parents_children_pos(parents_children_pos);
                 // Add new node to nodes array, to parent's children array and to child_map
                 let new_node_index = self.nodes.len();
+                //TODO: check if a child with the same content already exist, and return None
                 let node_content = String::from(new_node.get_content_ref().get_val());
                 self.nodes.push(new_node);
                 self.nodes[parent_node_index].add_child(node_content, new_node_index);
@@ -114,6 +115,7 @@ impl<T: NodeContent> Tree<T> {
             if let Some(new_node) = Node::<T>::new_node(node_content, self.nodes[node_index].get_level()) {
                 // Update parent's child_map
                 if let Some(parent_position) = self.nodes[node_index].get_parent_position() {
+                    //TODO: check if a child with the same content already exist, and return None
                     let old_node_content = String::from(self.nodes[node_index].get_content_ref().get_val());
                     self.nodes[parent_position].update_child(&old_node_content, node_content);
                 }

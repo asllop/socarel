@@ -7,6 +7,7 @@ All notable changes to the **Socarel** project will be documented in this file.
 ### Added
 
 - Iterate subtrees from any initial node using `Tree::iterators_at()`.
+- Children iterator.
 
 ### Impoved
 
