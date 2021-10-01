@@ -164,12 +164,10 @@ impl<T: NodeContent> Tree<T> {
     /// * An [`Option`] with the node index.
     ///
     pub fn find_path(&self, initial_node: usize, path: &[&str]) -> Option<usize> {
-        let mut last_node_index = Some(initial_node);
         let mut node_index = initial_node;
         for path_element in path.iter() {
             if self.nodes.len() > node_index {
                 if let Some(path_element_index) = self.nodes[node_index].get_child(path_element) {
-                    last_node_index = Some(path_element_index);
                     node_index = path_element_index;
                 }
                 else {
@@ -180,7 +178,7 @@ impl<T: NodeContent> Tree<T> {
                 return None;
             }
         }
-        last_node_index
+        Some(node_index)
     }
 
     #[deprecated(since="0.5.0", note="find_node will be removed in the next major release, please use `find_path` instead")]
