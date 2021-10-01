@@ -8,6 +8,11 @@ All notable changes to the **Socarel** project will be documented in this file.
 
 - Iterate subtrees from any initial node using `Tree::iterators_at()`.
 - Children iterator.
+- New function to find paths, `Tree::find_path`.
+
+### Changes
+
+- Deprecated `Tree::find_node`.
 
 ### Impoved
 

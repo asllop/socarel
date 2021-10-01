@@ -1,7 +1,6 @@
 use crate::forest::*;
 use crate::tree::*;
 use crate::node::*;
-use crate::iter::*;
 
 fn forest_sample() -> Forest {
     let mut forest = <Forest>::new();
@@ -104,12 +103,12 @@ fn check_tree_integrity() {
 fn mutate_and_check_integrity() {
     let mut forest = forest_sample();
     let tree = forest.get_mut_tree("test_tree").expect("Could not find tree ID");
-    let child_2_1 = tree.find_node(&["root_node", "child_2", "child_2_1"]).expect("Could nod find node");
+    let child_2_1 = tree.find_path(0, &["child_2", "child_2_1"]).expect("Could nod find node");
     tree.update_node("remove_me", child_2_1).expect("Could not update node");
-    let remove_me = tree.find_node(&["root_node", "child_2", "remove_me"]).expect("Could nod find modified node");
+    let remove_me = tree.find_path(0, &["child_2", "remove_me"]).expect("Could nod find modified node");
     assert_eq!(child_2_1, remove_me);
     tree.unlink_node(remove_me).expect("Could unlink node");
-    if let Some(_) = tree.find_node(&["root_node", "child_2", "remove_me"]) {
+    if let Some(_) = tree.find_path(0, &["child_2", "remove_me"]) {
         panic!("Found unlinked node");
     }
     for (i, (n, _)) in tree.iterators().bfs().enumerate() {
@@ -278,7 +277,7 @@ fn test_children_iter() {
 }
 
 fn index_of_b_node() -> usize {
-    tree_sample().find_node(&["A", "B"]).unwrap()
+    tree_sample().find_path(0, &["B"]).unwrap()
 }
 
 #[test]

@@ -37,13 +37,13 @@ fn main() {
         println!("-------------------------------------------------------");
 
         // Is the unlinked node, will return None
-        let _found_node_a = my_tree.find_node(&["my root node", "child node 1", "grandchild 1 node"]);
+        let _found_node_a = my_tree.find_path(0, &["child node 1", "grandchild 1 node"]);
         println!("find '/my root node/child node 1/grandchild 1 node/' index = {:#?}", _found_node_a);
 
-        let _found_node_b = my_tree.find_node(&["my root node", "child node 2", "grandchild 2 node"]);
+        let _found_node_b = my_tree.find_path(0, &["child node 2", "grandchild 2 node"]);
         println!("find '/my root node/child node 2/grandchild 2 node/' index = {:#?}", _found_node_b);
 
-        let _found_root = my_tree.find_node(&["my root node"]);
+        let _found_root = my_tree.find_path(0, &[]);
         println!("find '/my root node/' index = {:#?}", _found_root);
     }
 

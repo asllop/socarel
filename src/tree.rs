@@ -148,8 +148,6 @@ impl<T: NodeContent> Tree<T> {
         None
     }
 
-    //TODO: starts by any node and the path doesn't include the root
-    //TODO: return a Result
     /// Find a node in the tree by its path.
     /// 
     /// The complexity of this operation is O(p), where *p* is the number of elements in the path.
@@ -166,7 +164,23 @@ impl<T: NodeContent> Tree<T> {
     /// * An [`Option`] with the node index.
     ///
     pub fn find_path(&self, initial_node: usize, path: &[&str]) -> Option<usize> {
-        Some(0)
+        let mut last_node_index = Some(initial_node);
+        let mut node_index = initial_node;
+        for path_element in path.iter() {
+            if self.nodes.len() > node_index {
+                if let Some(path_element_index) = self.nodes[node_index].get_child(path_element) {
+                    last_node_index = Some(path_element_index);
+                    node_index = path_element_index;
+                }
+                else {
+                    return None;
+                }
+            }
+            else {
+                return None;
+            }
+        }
+        last_node_index
     }
 
     #[deprecated(since="0.5.0", note="find_node will be removed in the next major release, please use `find_path` instead")]
@@ -273,7 +287,7 @@ impl<T: NodeContent> Tree<T> {
 
     //TODO: link an existing node to a different parent (it can be an unlinked node -> we need a flag in the node to know it is already unlinked).
     //TODO: return a Result
-    pub fn relink_node(&mut self, node_index: usize, parent_node_index: usize) -> Option<usize> {
+    pub fn relink_node(&mut self, _node_index: usize, _parent_node_index: usize) -> Option<usize> {
         Some(0)
     }
 
@@ -294,7 +308,12 @@ impl<T: NodeContent> Tree<T> {
 
     //TODO: append one tree to another. Works like link_node, but links a whole tree instead of a single node.
     //TODO: return a Result
-    pub fn append_tree(&mut self, tree: &Tree<T>, parent_node_index: usize) -> Option<usize> {
+    pub fn append_tree(&mut self, _tree: &Tree<T>, _parent_node_index: usize) -> Option<usize> {
         Some(0)
+    }
+
+    //TODO: build a subtree from a tree
+    pub fn subtree(&self, _root_node: usize) -> Self {
+        Tree::new()
     }
 }
