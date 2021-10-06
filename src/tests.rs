@@ -178,25 +178,46 @@ fn check_custom_node_content() {
     let _child_1_1 = tree.link_node("5:child_1_1", _child_1).unwrap();
     let _child_1_1_1 = tree.link_node("12:child_1_1_1", _child_1_1).unwrap();
 
-    for (i, (n, _)) in tree.iterators().sequential().enumerate() {
-        match i {
-            0 => {
-                if !n.get_content_ref().get_val().eq("root_node") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
-                if n.get_content_ref().get_weight() != 0 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
-            },
-            1 => {
-                if !n.get_content_ref().get_val().eq("child_1") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
-                if n.get_content_ref().get_weight() != 10 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
-            },
-            2 => {
-                if !n.get_content_ref().get_val().eq("child_1_1") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
-                if n.get_content_ref().get_weight() != 5 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
-            },
-            3 => {
-                if !n.get_content_ref().get_val().eq("child_1_1_1") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
-                if n.get_content_ref().get_weight() != 12 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
-            },
-            _ => {}
+    let mut forest = Forest::<RawTreeId, _>::new();
+    forest.add_tree("custom_node_tree", tree);
+    forest.new_tree("empty_tree");
+
+    for (ti, (tree_id, tree)) in forest.iter().enumerate() {
+
+        if ti > 1 {
+            panic!("Invalid tree index");
+        }
+
+        if tree_id.get_id() == "custom_node_tree" && ti == 0 {
+            for (i, (n, _)) in tree.iterators().sequential().enumerate() {
+                match i {
+                    0 => {
+                        if !n.get_content_ref().get_val().eq("root_node") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
+                        if n.get_content_ref().get_weight() != 0 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
+                    },
+                    1 => {
+                        if !n.get_content_ref().get_val().eq("child_1") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
+                        if n.get_content_ref().get_weight() != 10 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
+                    },
+                    2 => {
+                        if !n.get_content_ref().get_val().eq("child_1_1") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
+                        if n.get_content_ref().get_weight() != 5 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
+                    },
+                    3 => {
+                        if !n.get_content_ref().get_val().eq("child_1_1_1") { panic!("Wrong {} node content!", n.get_content_ref().get_val()); }
+                        if n.get_content_ref().get_weight() != 12 { panic!("Wrong {} node weight!", n.get_content_ref().get_weight()); }
+                    },
+                    _ => {
+                        panic!("Invalid child index");
+                    }
+                }
+            }
+        }
+        else if tree_id.get_id() == "empty_tree" && ti == 1 {
+            assert_eq!(tree.get_nodes_len(), 0);
+        }
+        else {
+            panic!("Invalid tree");
         }
     }
 }
