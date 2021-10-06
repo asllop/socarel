@@ -188,7 +188,7 @@ fn check_custom_node_content() {
             panic!("Invalid tree index");
         }
 
-        if tree_id.get_id() == "custom_node_tree" && ti == 0 {
+        if tree_id.get_id() == "custom_node_tree" {
             for (i, (n, _)) in tree.iterators().sequential().enumerate() {
                 match i {
                     0 => {
@@ -213,7 +213,7 @@ fn check_custom_node_content() {
                 }
             }
         }
-        else if tree_id.get_id() == "empty_tree" && ti == 1 {
+        else if tree_id.get_id() == "empty_tree" {
             assert_eq!(tree.get_nodes_len(), 0);
         }
         else {

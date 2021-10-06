@@ -114,6 +114,7 @@ impl<I: TreeIdentifier, T: NodeContent> Forest<I, T> {
         }
     }
 
+    //TODO: return Result
     /// Create new empty tree.
     /// 
     /// # Arguments
@@ -141,6 +142,7 @@ impl<I: TreeIdentifier, T: NodeContent> Forest<I, T> {
     /// * Nothing.
     /// 
     pub fn add_tree(&mut self, name: &str, tree: Tree<T>) {
+        //TODO check if tree already exist, and fail
         if let Some(tid) = I::new(name) {
             self.trees.insert(tid, tree);
         }

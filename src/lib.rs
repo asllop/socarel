@@ -231,6 +231,10 @@
 //!     let cref = node.get_content_ref();
 //!     println!("Node content = `{}` weight = {}", cref.get_val(), cref.get_weight());
 //! }
+//! 
+//! // Add tree to a Forest, this time we have to specify the types
+//! let mut forest = Forest::<RawTreeId, _>::new();
+//! forest.add_tree("weight_tree", tree);
 //! ```
 //! 
 //! Note that in this case, [`NodeContent::get_val()`] is not returning the same value passed to [`NodeContent::new()`]. If you are used to the default node content, [`RawNode`], you could have thought that it is always the same, but it is not, it depends on the specific [`NodeContent`] implementation you have in your tree.<br>
