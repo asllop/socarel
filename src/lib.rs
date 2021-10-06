@@ -237,6 +237,24 @@
 //! And that's the ultimate reason why we have [`NodeContent::gen_content()`], to be able to generate the original content passed to `new`.
 
 /// Generate a default implementation for [`TreeIdentifier`] dependency traits (PartialEq, Eq, Hash and Display).
+/// 
+/// # Example
+/// 
+/// ```
+/// # use socarel::*;
+/// struct MyTreeId(String);
+/// 
+/// impl TreeIdentifier for MyTreeId {
+///     fn new(tree_id: &str) -> Option<Self> {
+///         Some(Self(String::from(tree_id)))
+///     }
+///     fn get_id(&self) -> &str {
+///         &self.0
+///     }
+/// }
+/// 
+/// impl_tree_id_traits!(MyTreeId);
+/// ```
 #[macro_export]
 macro_rules! impl_tree_id_traits {
     ( $x:ty ) => {
