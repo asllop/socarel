@@ -34,32 +34,24 @@ pub trait TreeIdentifier: std::cmp::Eq + std::hash::Hash + std::fmt::Display {
     /// 
     /// * Tree ID.
     ///
-    fn gen_tree_id(&self) -> String;
+    fn gen_tree_id(&self) -> String {
+        String::from(self.get_id())
+    }
 }
 
 /// Default [`TreeIdentifier`] struct.
 /// 
 /// It simply holds the tree ID as is, without parsing or modifying it.
 #[derive(Debug)]
-pub struct RawTreeId {
-    tree_id: String
-}
+pub struct RawTreeId(String);
 
 impl TreeIdentifier for RawTreeId {
     fn new(tree_id: &str) -> Option<Self> {
-        Some(
-            Self {
-                tree_id: String::from(tree_id)
-            }
-        )
+        Some(Self(String::from(tree_id)))
     }
 
     fn get_id(&self) -> &str {
-        &self.tree_id
-    }
-
-    fn gen_tree_id(&self) -> String {
-        String::from(self.get_id())
+        &self.0
     }
 }
 

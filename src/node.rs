@@ -33,33 +33,24 @@ pub trait NodeContent {
     /// 
     /// * Node content.
     ///
-    fn gen_content(&self) -> String;
+    fn gen_content(&self) -> String {
+        String::from(self.get_val())
+    }
 }
 
 /// Default [`NodeContent`] struct.
 /// 
 /// It simply holds the content as is, without parsing or modifying it.
 #[derive(Debug)]
-pub struct RawNode {
-    /// Node content.
-    content: String
-}
+pub struct RawNode(String);
 
 impl NodeContent for RawNode {
     fn new(content: &str) -> Option<Self> {
-        Some(
-            Self {
-                content: String::from(content)
-            }
-        )
+        Some(Self(String::from(content)))
     }
 
     fn get_val(&self) -> &str {
-        &self.content
-    }
-
-    fn gen_content(&self) -> String {
-        String::from(self.get_val())
+        &self.0
     }
 }
 
