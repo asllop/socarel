@@ -1,4 +1,4 @@
-use socarel::{Forest, Tree, Node, NodeContent};
+use socarel::{Forest, Tree, Node, NodeContent, TreeIdentifier};
 
 fn main() {
     let mut forest = <Forest>::new();
@@ -50,7 +50,7 @@ fn main() {
     println!("-------------------------------------------------------");
     println!("All trees:");
     for (k,v) in forest.iter() {
-        println!("Tree name `{}` tree = {:#?}", k, v);
+        println!("Tree name `{}` tree = {:#?}", k.get_id(), v);
     }
 
     println!("-------------------------------------------------------");

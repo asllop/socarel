@@ -3,7 +3,7 @@ use std::collections::hash_map::Iter;
 use crate::node::*;
 use crate::tree::*;
 
-/// Generate a default implementation for [`TreeIdentifier`] dependency traits (PartialEq, Eq, Hash and Display).
+/// Generate a default implementation for [`TreeIdentifier`] dependency traits (PartialEq, Eq and Hash).
 /// 
 /// # Example
 /// 
@@ -38,17 +38,11 @@ macro_rules! impl_tree_id_traits {
                 self.get_id().hash(state);
             }
         }
-        
-        impl std::fmt::Display for $x {
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                write!(f, "{}", self.get_id())
-            }
-        }
     };
 }
 
 /// Trait to define structs that model a tree ID
-pub trait TreeIdentifier: std::cmp::Eq + std::hash::Hash + std::fmt::Display {
+pub trait TreeIdentifier: std::cmp::Eq + std::hash::Hash {
     //TODO return a Result with wither Self or an error (impl Error trait).
     /// Constructor.
     /// 
