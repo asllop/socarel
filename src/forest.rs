@@ -63,27 +63,7 @@ impl TreeIdentifier for RawTreeId {
     }
 }
 
-//TODO: create a macro to implement PartialEq, Eq, Hash and Display for all `TreeIdentifier`s, because the implementation is always the same
-
-impl std::cmp::PartialEq for RawTreeId {
-    fn eq(&self, other: &Self) -> bool {
-        self.get_id() == other.get_id()
-    }
-}
-
-impl std::cmp::Eq for RawTreeId {}
-
-impl std::hash::Hash for RawTreeId {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.get_id().hash(state);
-    }
-}
-
-impl std::fmt::Display for RawTreeId {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.get_id())
-    }
-}
+impl_tree_id_traits!(RawTreeId);
 
 //---- Structs ----//
 

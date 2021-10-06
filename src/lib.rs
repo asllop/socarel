@@ -236,6 +236,32 @@
 //! Note that in this case, [`NodeContent::get_val()`] is not returning the same value passed to [`NodeContent::new()`]. If you are used to the default node content, [`RawNode`], you could have thought that it is always the same, but it is not, it depends on the specific [`NodeContent`] implementation you have in your tree.<br>
 //! And that's the ultimate reason why we have [`NodeContent::gen_content()`], to be able to generate the original content passed to `new`.
 
+/// Generate a default implementation for [`TreeIdentifier`] dependency traits (PartialEq, Eq, Hash and Display).
+#[macro_export]
+macro_rules! impl_tree_id_traits {
+    ( $x:ty ) => {
+        impl std::cmp::PartialEq for $x {
+            fn eq(&self, other: &Self) -> bool {
+                self.get_id() == other.get_id()
+            }
+        }
+        
+        impl std::cmp::Eq for $x {}
+        
+        impl std::hash::Hash for $x {
+            fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+                self.get_id().hash(state);
+            }
+        }
+        
+        impl std::fmt::Display for $x {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f, "{}", self.get_id())
+            }
+        }
+    };
+}
+
 mod node;
 mod tree;
 mod forest;
