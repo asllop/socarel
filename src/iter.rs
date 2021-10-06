@@ -567,7 +567,7 @@ impl<'a, T: NodeContent> Iterator for InvPostDfsIter<'a, T> {
     }
 }
 
-// Iterate over all children of a node
+/// Iterate over all children of a node
 pub struct ChildrenIter<'a, T: NodeContent> {
     tree: &'a Tree<T>,
     initial_node: usize,
