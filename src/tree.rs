@@ -60,7 +60,7 @@ impl<T: NodeContent> Tree<T> {
             if let Some(mut new_node) = Node::<T>::new_node(node_content, new_node_level) {
                 // Update new node, set parent_position and parents_children_pos
                 new_node.set_parent_position(parent_node_index);
-                let parents_children_pos = self.nodes[parent_node_index].get_num_chuildren();
+                let parents_children_pos = self.nodes[parent_node_index].get_num_children();
                 new_node.set_parents_children_pos(parents_children_pos);
                 // Add new node to nodes array, to parent's children array and to child_map
                 let new_node_index = self.nodes.len();
@@ -91,7 +91,7 @@ impl<T: NodeContent> Tree<T> {
         if self.nodes.len() > node_index {
             if let Some(parent) = self.nodes[node_index].get_parent_position() {
                 if let Some(parents_children_pos) = self.nodes[node_index].get_parents_children_pos() {
-                    if self.nodes[parent].get_num_chuildren() > parents_children_pos {
+                    if self.nodes[parent].get_num_children() > parents_children_pos {
                         let node_content = String::from(self.nodes[node_index].get_content_ref().get_val());
                         self.nodes[parent].remove_child(&node_content, parents_children_pos);
                         return Some(node_index);

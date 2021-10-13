@@ -25,7 +25,7 @@ fn check_tree_integrity() {
                 0 => {
                     if !n.get_content_ref().get_val().eq("root_node") { panic!("Wrong root_node content") }
                     if let Some(_) = n.get_parent_position() { panic!("root_node has a parent") }
-                    if n.get_num_chuildren() != 3 { panic!("root_node hasn't 3 children") }
+                    if n.get_num_children() != 3 { panic!("root_node hasn't 3 children") }
                     if n.get_children_ref()[0] != 1 || n.get_children_ref()[1] != 2 || n.get_children_ref()[2] != 6 { panic!("root_node children are incorrect") }
                 },
                 1 => {
@@ -36,7 +36,7 @@ fn check_tree_integrity() {
                             panic!("child_1 has wrong parent");
                         }
                     }
-                    if n.get_num_chuildren() != 0 { panic!("child_1 hasn't 0 children"); }
+                    if n.get_num_children() != 0 { panic!("child_1 hasn't 0 children"); }
                 },
                 2 => {
                     if !n.get_content_ref().get_val().eq("child_2") { panic!("Wrong child_2 content"); }
@@ -46,7 +46,7 @@ fn check_tree_integrity() {
                             panic!("child_2 has wrong parent");
                         }
                     }
-                    if n.get_num_chuildren() != 2 { panic!("child_2 hasn't 2 children"); }
+                    if n.get_num_children() != 2 { panic!("child_2 hasn't 2 children"); }
                     if n.get_children_ref()[0] != 3 || n.get_children_ref()[1] != 5 { panic!("child_2 children are incorrect"); }
                 },
                 3 => {
@@ -57,7 +57,7 @@ fn check_tree_integrity() {
                             panic!("child_2_1 has wrong parent");
                         }
                     }
-                    if n.get_num_chuildren() != 1 { panic!("child_2_1 hasn't 1 child"); }
+                    if n.get_num_children() != 1 { panic!("child_2_1 hasn't 1 child"); }
                     if n.get_children_ref()[0] != 4 { panic!("child_2_1 children are incorrect"); }
                 },
                 4 => {
@@ -68,7 +68,7 @@ fn check_tree_integrity() {
                             panic!("child_2_1_1 has wrong parent");
                         }
                     }
-                    if n.get_num_chuildren() != 0 { panic!("child_2_1_1 hasn't 0 children"); }
+                    if n.get_num_children() != 0 { panic!("child_2_1_1 hasn't 0 children"); }
                 },
                 5 => {
                     if !n.get_content_ref().get_val().eq("child_2_2") { panic!("Wrong child_2_2 content"); }
@@ -78,7 +78,7 @@ fn check_tree_integrity() {
                             panic!("child_2_2 has wrong parent");
                         }
                     }
-                    if n.get_num_chuildren() != 0 { panic!("child_2_2 hasn't 0 children"); }
+                    if n.get_num_children() != 0 { panic!("child_2_2 hasn't 0 children"); }
                 },
                 6 => {                          
                     if !n.get_content_ref().get_val().eq("child_3") { panic!("Wrong child_3 content"); }
@@ -88,7 +88,7 @@ fn check_tree_integrity() {
                             panic!("child_3 has wrong parent");
                         }
                     }
-                    if n.get_num_chuildren() != 0 { panic!("child_3 hasn't 0 children"); }
+                    if n.get_num_children() != 0 { panic!("child_3 hasn't 0 children"); }
                 }
                 _ => {}
             }
@@ -293,6 +293,11 @@ fn test_inv_post_dfs_iter() {
 }
 
 #[test]
+fn test_in_dfs_iter() {
+    test_iterator(tree_sample().iterators().in_dfs(), &["D", "B", "H", "E", "A", "F", "C", "G"]);
+}
+
+#[test]
 fn test_children_iter() {
     test_iterator(tree_sample().iterators().children(), &["B", "C"]);
 }
@@ -344,4 +349,9 @@ fn test_inv_post_dfs_iter_at() {
 #[test]
 fn test_children_iter_at() {
     test_iterator(tree_sample().iterators_at(index_of_b_node()).children(), &["D", "E"]);
+}
+
+#[test]
+fn test_in_dfs_iter_at() {
+    test_iterator(tree_sample().iterators_at(index_of_b_node()).in_dfs(), &["D", "B", "H", "E"]);
 }

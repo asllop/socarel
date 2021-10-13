@@ -10,6 +10,7 @@ All notable changes to the **Socarel** project will be documented in this file.
 - Children iterator.
 - New function to find paths, `Tree::find_path`.
 - Trait for Tree IDs, `TreeIdentifier`, similar to NodeContent. Also added a macro (`impl_tree_id_traits!`) to implement default details.
+- In-order DFS iterator.
 
 ### Changes
 

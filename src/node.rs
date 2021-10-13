@@ -181,7 +181,7 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// * Number of children.
     ///
-    pub fn get_num_chuildren(&self) -> usize {
+    pub fn get_num_children(&self) -> usize {
         self.children.len()
     }
 

@@ -83,6 +83,8 @@ fn main() {
     iterate(tree.iterators().inv_post_dfs());
     println!("--- Children Iter:");
     iterate(tree.iterators().children());
+    println!("--- In-Order DFS Iter:");
+    iterate(tree.iterators().in_dfs());
 
     println!("\nIters from node B:\n");
 
@@ -104,6 +106,23 @@ fn main() {
     iterate(tree.iterators_at(_b).inv_post_dfs());
     println!("--- Children Iter:");
     iterate(tree.iterators_at(_b).children());
+
+    println!("-------------------------------------------------------");
+
+    let mut tree = <Tree>::new();
+    let _a = tree.set_root("A").unwrap();
+    let _b = tree.link_node("B", _a).unwrap();
+    let _c = tree.link_node("C", _a).unwrap();
+    let _d = tree.link_node("D", _a).unwrap();
+    let _e = tree.link_node("E", _b).unwrap();
+    let _f = tree.link_node("F", _b).unwrap();
+    let _g = tree.link_node("G", _b).unwrap();
+    let _h = tree.link_node("H", _c).unwrap();
+    let _i = tree.link_node("I", _c).unwrap();
+    let _j = tree.link_node("J", _d).unwrap();
+
+    println!("--- In-Order DFS Iter:");
+    iterate(tree.iterators().in_dfs());
 }
 
 fn iterate<'a>(iter: impl Iterator<Item=(&'a Node, usize)>) {

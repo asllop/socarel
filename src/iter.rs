@@ -181,6 +181,21 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
             ChildrenIter::new(self.tree, 0)
         }
     }
+
+    /// Get In-Order DFS iterator
+    /// 
+    /// # Return
+    /// 
+    /// * Iterator.
+    ///
+    pub fn in_dfs(&self) -> InDfsIter<'a, T> {
+        if let Some(initial_node) = self.initial_node {
+            InDfsIter::new(self.tree, initial_node)
+        }
+        else {
+            InDfsIter::new(self.tree, 0)
+        }
+    }
 }
 
 /// Simple Iterator, in sequential order.
@@ -599,8 +614,77 @@ impl<'a, T: NodeContent> Iterator for ChildrenIter<'a, T> {
     }
 }
 
-//TODO: implement in-order DFS and inverse in-order DFS iterators (https://en.wikipedia.org/wiki/Tree_traversal)
-// https://stackoverflow.com/questions/23778489/in-order-tree-traversal-for-non-binary-trees
+/// In-Order DFS Iterator.
+pub struct InDfsIter<'a, T: NodeContent> {
+    tree: &'a Tree<T>,
+    // (Node, Next children to visit)
+    pila: Vec<(usize, usize)>
+}
+
+impl<'a, T: NodeContent> InDfsIter<'a, T> {
+    pub fn new(tree: &'a Tree<T>, initial_node: usize) -> Self {
+        Self {
+            tree,
+            pila: vec!((initial_node, 0))
+        }
+    }
+
+    fn is_valid(&self, node: usize, child: usize) -> bool {
+        self.tree.get_nodes_ref()[node].get_num_children() > child
+    }
+
+    fn pop_next(&mut self) -> Option<(usize, usize)> {
+        while let Some((node, child)) = self.pila.pop() {
+            if self.is_valid(node, child) {
+                return Some((node, child));
+            }
+            else {
+                if child == 0 {
+                    return Some((node, child));
+                }
+                else if child == 1 {
+                    return Some((node, child));
+                }
+            }
+        }
+        None
+    }
+}
+
+impl<'a, T: NodeContent> Iterator for InDfsIter<'a, T> {
+    type Item = (&'a Node<T>, usize);
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some((node, child)) = self.pop_next() {
+            if child == 1 {
+                // Visit current node
+                if self.is_valid(node, child) {
+                    self.pila.push((node, child + 1));
+                    let next_node = self.tree.get_nodes_ref()[node].get_children_ref()[child];
+                    self.pila.push((next_node, 0));
+                    Some((&self.tree.get_nodes_ref()[node], node))
+                }
+                else {
+                    Some((&self.tree.get_nodes_ref()[node], node))
+                }
+            }
+            else if child == 0 && !self.is_valid(node, child) {
+                // Visit current node, it has no children, is a leaf
+                Some((&self.tree.get_nodes_ref()[node], node))
+            }
+            else {
+                // Process next node, that is current node first child
+                self.pila.push((node, child + 1));
+                let next_node = self.tree.get_nodes_ref()[node].get_children_ref()[child];
+                self.pila.push((next_node, 0));
+                self.next()
+            }
+        }
+        else {
+            None
+        }
+    }
+}
+
 
 //TODO: config the in-order strategy for not binary trees: group last or group first.
-//TODO: define an additional in-order algorithm for n-ary trees: visit the middle for each pair, so we can visit one nore more than once.
+//TODO: define an additional in-order algorithm for n-ary trees: visit the middle for each pair, so we can visit one node more than once.
