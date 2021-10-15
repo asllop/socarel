@@ -248,6 +248,7 @@ pub use node::*;
 mod tree;
 pub use tree::*;
 
+#[macro_use]
 mod forest;
 pub use forest::*;
 
