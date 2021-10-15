@@ -1,10 +1,10 @@
 use std::collections::HashMap as Map;
+use crate::error::*;
 
 //---- Structs ----//
 
 /// Trait to define structs that model a node content.
 pub trait NodeContent {
-    //TODO return a Result with wither Self or an error (impl Error trait).
     /// Constructor.
     /// 
     /// # Arguments
@@ -15,7 +15,7 @@ pub trait NodeContent {
     /// 
     /// * An [`Option`] with the node content.
     /// 
-    fn new(content: &str) -> Option<Self> where Self: Sized;
+    fn new(content: &str) -> Result<Self, SocarelError> where Self: Sized;
     
     /// Get node value.
     /// 
@@ -45,8 +45,8 @@ pub trait NodeContent {
 pub struct RawNode(String);
 
 impl NodeContent for RawNode {
-    fn new(content: &str) -> Option<Self> {
-        Some(Self(String::from(content)))
+    fn new(content: &str) -> Result<Self, SocarelError> {
+        Ok(Self(String::from(content)))
     }
 
     fn get_val(&self) -> &str {
@@ -82,9 +82,9 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// # Return
     /// 
-    /// * Node struct or None if content parsing fails.
+    /// * Node struct.
     /// 
-    pub fn new_root(content: &str) -> Option<Self> {
+    pub fn new_root(content: &str) -> Result<Self, SocarelError> {
         Self::new_node(content, 1)
     }
 
@@ -97,24 +97,20 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// # Return
     /// 
-    /// * Node struct or None if content parsing fails.
+    /// * Node struct.
     /// 
-    pub fn new_node(content: &str, level: usize) -> Option<Self> {
-        if let Some(content_node) = NodeContent::new(content) {
-            Some(
-                Node {
-                    content: content_node,
-                    level,
-                    parent_position: None,
-                    child_map: Map::new(),
-                    parents_children_pos: None,
-                    children: vec!()
-                }
-            )
-        }
-        else {
-            None
-        }
+    pub fn new_node(content: &str, level: usize) -> Result<Self, SocarelError> {
+        let content_node = NodeContent::new(content)?;
+        Ok(
+            Node {
+                content: content_node,
+                level,
+                parent_position: None,
+                child_map: Map::new(),
+                parents_children_pos: None,
+                children: vec!()
+            }
+        )
     }
 
     /// Set content.
@@ -261,8 +257,7 @@ impl<T: NodeContent> Node<T> {
         self.child_map.remove(node_content);
         self.children[node_index] = usize::MAX;
     }
-
-    //TODO: return a Result
+    
     /// Update child map.
     /// 
     /// # Arguments
@@ -274,12 +269,12 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// * An [`Option`] with the node index.
     ///
-    pub fn update_child(&mut self, node_content: &str, new_node_content: &str) -> Option<usize> {
+    pub fn update_child(&mut self, node_content: &str, new_node_content: &str) -> Result<usize, SocarelError> {
         if let Some(node_index) = self.child_map.remove(node_content) {
             self.child_map.insert(String::from(new_node_content), node_index);
-            return Some(node_index);
+            return Ok(node_index);
         }
-        None
+        Err(SocarelError::new("Could not update child", 1, SocarelErrorType::Node))
     }
 
     /// Get child index using node content.

@@ -161,19 +161,19 @@
 //! 
 //! impl NodeContent for WeightNode {
 //!     // We parse the node content and return None if not a valid format
-//!     fn new(content: &str) -> Option<Self> {
+//!     fn new(content: &str) -> Result<Self, SocarelError> {
 //!         let vec: Vec<&str> = content.split(':').collect();
 //!         if vec.len() == 2 {
 //!             match vec[0].trim().parse() {
-//!                 Ok(num) => Some(Self {
+//!                 Ok(num) => Ok(Self {
 //!                     content: String::from(vec[1]),
 //!                     weight: num
 //!                 }),
-//!                 Err(_) => None
+//!                 Err(_) => Err(SocarelError::new("Error parsing node, weight not a number", -1, SocarelErrorType::Node))
 //!             }
 //!         }
 //!         else {
-//!             None
+//!             Err(SocarelError::new("Error parsing node, wrong format", -2, SocarelErrorType::Node))
 //!         }
 //!     }
 //! 
@@ -201,19 +201,19 @@
 //! #     }
 //! # }
 //! # impl NodeContent for WeightNode {
-//! #     fn new(content: &str) -> Option<Self> {
+//! #     fn new(content: &str) -> Result<Self, SocarelError> {
 //! #         let vec: Vec<&str> = content.split(':').collect();
 //! #         if vec.len() == 2 {
 //! #             match vec[0].trim().parse() {
-//! #                 Ok(num) => Some(Self {
+//! #                 Ok(num) => Ok(Self {
 //! #                     content: String::from(vec[1]),
 //! #                     weight: num
 //! #                 }),
-//! #                 Err(_) => None
+//! #                 Err(_) => Err(SocarelError::new("", 0, SocarelErrorType::Other))
 //! #             }
 //! #         }
 //! #         else {
-//! #             None
+//! #             Err(SocarelError::new("", 0, SocarelErrorType::Other))
 //! #         }
 //! #     }
 //! #     fn get_val(&self) -> &str {
@@ -241,14 +241,19 @@
 //! And that's the ultimate reason why we have [`NodeContent::gen_content()`], to be able to generate the original content passed to `new`.
 
 mod node;
-mod tree;
-mod forest;
-mod iter;
-
 pub use node::*;
+
+mod tree;
 pub use tree::*;
+
+mod forest;
 pub use forest::*;
+
+mod iter;
 pub use iter::*;
+
+mod error;
+pub use error::*;
 
 #[cfg(test)]
 mod tests;

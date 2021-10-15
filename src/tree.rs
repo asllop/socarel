@@ -1,5 +1,6 @@
 use crate::node::*;
 use crate::iter::*;
+use crate::error::*;
 
 //---- Structs ----//
 
@@ -20,7 +21,6 @@ impl<T: NodeContent> Tree<T> {
         }
     }
 
-    //TODO: return a Result
     /// Set root node.
     /// 
     /// # Arguments
@@ -31,18 +31,16 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// * An [`Option`] with the root node index (always 0).
     ///
-    pub fn set_root(&mut self, node_content: &str) -> Option<usize> {
-        if let Some(node) = Node::<T>::new_root(node_content) {
-            if self.nodes.len() == 0 {
-                // Create root node
-                self.nodes.push(node);
-                return Some(0);
-            }
+    pub fn set_root(&mut self, node_content: &str) -> Result<usize, SocarelError> {
+        let node = Node::<T>::new_root(node_content)?;
+        if self.nodes.len() == 0 {
+            // Create root node
+            self.nodes.push(node);
+            return Ok(0);
         }
-        None
+        Err(SocarelError::new("Root node already exist", 1, SocarelErrorType::Tree))
     }
 
-    //TODO: return a Result
     /// Create new node and link it to its parent.
     /// 
     /// # Arguments
@@ -54,27 +52,25 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// * An [`Option`] with the new node index.
     ///
-    pub fn link_node(&mut self, node_content: &str, parent_node_index: usize) -> Option<usize> {
+    pub fn link_node(&mut self, node_content: &str, parent_node_index: usize) -> Result<usize, SocarelError> {
         if parent_node_index < self.nodes.len() {
             let new_node_level = self.nodes[parent_node_index].get_level() + 1;
-            if let Some(mut new_node) = Node::<T>::new_node(node_content, new_node_level) {
-                // Update new node, set parent_position and parents_children_pos
-                new_node.set_parent_position(parent_node_index);
-                let parents_children_pos = self.nodes[parent_node_index].get_num_children();
-                new_node.set_parents_children_pos(parents_children_pos);
-                // Add new node to nodes array, to parent's children array and to child_map
-                let new_node_index = self.nodes.len();
-                //TODO: check if a child with the same content already exist, and return None
-                let node_content = String::from(new_node.get_content_ref().get_val());
-                self.nodes.push(new_node);
-                self.nodes[parent_node_index].add_child(node_content, new_node_index);
-                return Some(new_node_index);
-            }
+            let mut new_node = Node::<T>::new_node(node_content, new_node_level)?;
+            // Update new node, set parent_position and parents_children_pos
+            new_node.set_parent_position(parent_node_index);
+            let parents_children_pos = self.nodes[parent_node_index].get_num_children();
+            new_node.set_parents_children_pos(parents_children_pos);
+            // Add new node to nodes array, to parent's children array and to child_map
+            let new_node_index = self.nodes.len();
+            //TODO: check if a child with the same content already exist, and return Err
+            let node_content = String::from(new_node.get_content_ref().get_val());
+            self.nodes.push(new_node);
+            self.nodes[parent_node_index].add_child(node_content, new_node_index);
+            return Ok(new_node_index);
         }
-        None
+        Err(SocarelError::new("Could not link node", 2, SocarelErrorType::Tree))
     }
     
-    //TODO: return a Result
     /// Unlink node. It doesn't remove node from the tree, it just disconnects it from parent.
     /// 
     /// This process is O(1) complexity.
@@ -87,22 +83,21 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// * An [`Option`] with the node index.
     ///
-    pub fn unlink_node(&mut self, node_index: usize) -> Option<usize> {
+    pub fn unlink_node(&mut self, node_index: usize) -> Result<usize, SocarelError> {
         if self.nodes.len() > node_index {
             if let Some(parent) = self.nodes[node_index].get_parent_position() {
                 if let Some(parents_children_pos) = self.nodes[node_index].get_parents_children_pos() {
                     if self.nodes[parent].get_num_children() > parents_children_pos {
                         let node_content = String::from(self.nodes[node_index].get_content_ref().get_val());
                         self.nodes[parent].remove_child(&node_content, parents_children_pos);
-                        return Some(node_index);
+                        return Ok(node_index);
                     }
                 }
             }
         }
-        None
+        Err(SocarelError::new("Could not unlink node", 3, SocarelErrorType::Tree))
     }
 
-    //TODO: return a Result
     /// Overwrite node content. It must exist.
     /// 
     /// # Arguments
@@ -114,21 +109,20 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// * An [`Option`] with the node index.
     ///
-    pub fn update_node(&mut self, node_content: &str, node_index: usize) -> Option<usize> {
+    pub fn update_node(&mut self, node_content: &str, node_index: usize) -> Result<usize, SocarelError> {
         if self.nodes.len() > node_index {
-            if let Some(new_node) = Node::<T>::new_node(node_content, self.nodes[node_index].get_level()) {
-                // Update parent's child_map
-                if let Some(parent_position) = self.nodes[node_index].get_parent_position() {
-                    //TODO: check if a child with the same content already exist, and return None
-                    let old_node_content = String::from(self.nodes[node_index].get_content_ref().get_val());
-                    self.nodes[parent_position].update_child(&old_node_content, node_content);
-                }
-                let current_node = self.nodes.get_mut(node_index).unwrap();
-                current_node.set_content(new_node.get_content());
-                return Some(node_index);
+            let new_node = Node::<T>::new_node(node_content, self.nodes[node_index].get_level())?;
+            // Update parent's child_map
+            if let Some(parent_position) = self.nodes[node_index].get_parent_position() {
+                //TODO: check if a child with the same content already exist, and return Err
+                let old_node_content = String::from(self.nodes[node_index].get_content_ref().get_val());
+                self.nodes[parent_position].update_child(&old_node_content, node_content)?;
             }
+            let current_node = self.nodes.get_mut(node_index).unwrap();
+            current_node.set_content(new_node.get_content());
+            return Ok(node_index);
         }
-        None
+        Err(SocarelError::new("Could not update node", 4, SocarelErrorType::Tree))
     }
 
     /// Get reference to node content.
@@ -181,62 +175,6 @@ impl<T: NodeContent> Tree<T> {
         Some(node_index)
     }
 
-    #[deprecated(since="0.5.0", note="find_node will be removed in the next major release, please use `find_path` instead")]
-    /// Find node in the tree by content.
-    /// 
-    /// The complexity of this operation is O(p), where `p` is the number of elements in the path.
-    /// 
-    /// # Deprecated:
-    /// 
-    /// Please use [`find_path`][`Tree::find_path()`] instead. To update, please look at the following example that demonstrates an equivalent usage:
-    /// 
-    /// ```
-    /// # use socarel::*;
-    /// # let tree = <Tree>::new();
-    /// tree.find_node(&["root", "child_1", "child_1_1"]);
-    /// // Is equivalent to:
-    /// tree.find_path(0, &["child_1", "child_1_1"]);
-    /// // Note that, with find_path, we specify the node where to start finding and the first postion in the path is not the root.
-    /// ```
-    /// 
-    /// # Arguments
-    /// 
-    /// * `path` - Path of nodes, starting from root.
-    /// 
-    /// # Return
-    /// 
-    /// * An [`Option`] with the node index.
-    ///
-    pub fn find_node(&self, path: &[&str]) -> Option<usize> {
-        let mut last_node_index = None;
-        // Check root node
-        if self.nodes.len() > 0 && path.len() > 0 {
-            if self.nodes[0].get_content_ref().get_val() == path[0] {
-                last_node_index = Some(0);
-            }
-            else {
-                return None;
-            }
-        }
-        // Check following nodes
-        let mut node_index = 0;
-        for path_element in path[1..].iter() {
-            if self.nodes.len() > node_index {
-                if let Some(path_element_index) = self.nodes[node_index].get_child(path_element) {
-                    last_node_index = Some(path_element_index);
-                    node_index = path_element_index;
-                }
-                else {
-                    return None;
-                }
-            }
-            else {
-                return None;
-            }
-        }
-        last_node_index
-    }
-
     /// Get iterators interface.
     /// 
     /// # Return
@@ -284,9 +222,8 @@ impl<T: NodeContent> Tree<T> {
     }
 
     //TODO: link an existing node to a different parent (it can be an unlinked node -> we need a flag in the node to know it is already unlinked).
-    //TODO: return a Result
-    pub fn relink_node(&mut self, _node_index: usize, _parent_node_index: usize) -> Option<usize> {
-        Some(0)
+    pub fn relink_node(&mut self, _node_index: usize, _parent_node_index: usize) -> Result<usize, SocarelError> {
+        Ok(0)
     }
 
     // SLOW OPERATIONS: usually O(n) complexity.
@@ -305,9 +242,8 @@ impl<T: NodeContent> Tree<T> {
     }
 
     //TODO: append one tree to another. Works like link_node, but links a whole tree instead of a single node.
-    //TODO: return a Result
-    pub fn append_tree(&mut self, _tree: &Tree<T>, _parent_node_index: usize) -> Option<usize> {
-        Some(0)
+    pub fn append_tree(&mut self, _tree: &Tree<T>, _parent_node_index: usize) -> Result<usize, SocarelError> {
+        Ok(0)
     }
 
     //TODO: build a subtree from a tree

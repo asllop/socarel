@@ -2,6 +2,7 @@ use std::collections::HashMap as Map;
 use std::collections::hash_map::Iter;
 use crate::node::*;
 use crate::tree::*;
+use crate::error::*;
 
 /// Generate a default implementation for [`TreeIdentifier`] dependency traits (PartialEq, Eq and Hash).
 /// 
@@ -12,8 +13,8 @@ use crate::tree::*;
 /// struct MyTreeId(String);
 /// 
 /// impl TreeIdentifier for MyTreeId {
-///     fn new(tree_id: &str) -> Option<Self> {
-///         Some(Self(String::from(tree_id)))
+///     fn new(tree_id: &str) -> Result<Self, SocarelError> {
+///         Ok(Self(String::from(tree_id)))
 ///     }
 ///     fn get_id(&self) -> &str {
 ///         &self.0
@@ -43,7 +44,6 @@ macro_rules! impl_tree_id_traits {
 
 /// Trait to define structs that model a tree ID
 pub trait TreeIdentifier: std::cmp::Eq + std::hash::Hash {
-    //TODO return a Result with wither Self or an error (impl Error trait).
     /// Constructor.
     /// 
     /// # Arguments
@@ -54,7 +54,7 @@ pub trait TreeIdentifier: std::cmp::Eq + std::hash::Hash {
     /// 
     /// * An [`Option`] with the tree ID.
     /// 
-    fn new(tree_id: &str) -> Option<Self> where Self: Sized;
+    fn new(tree_id: &str) -> Result<Self, SocarelError> where Self: Sized;
     
     /// Get tree ID value.
     /// 
@@ -84,8 +84,8 @@ pub trait TreeIdentifier: std::cmp::Eq + std::hash::Hash {
 pub struct RawTreeId(String);
 
 impl TreeIdentifier for RawTreeId {
-    fn new(tree_id: &str) -> Option<Self> {
-        Some(Self(String::from(tree_id)))
+    fn new(tree_id: &str) -> Result<Self, SocarelError> {
+        Ok(Self(String::from(tree_id)))
     }
 
     fn get_id(&self) -> &str {
@@ -114,7 +114,6 @@ impl<I: TreeIdentifier, T: NodeContent> Forest<I, T> {
         }
     }
 
-    //TODO: return Result
     /// Create new empty tree.
     /// 
     /// # Arguments
@@ -125,11 +124,10 @@ impl<I: TreeIdentifier, T: NodeContent> Forest<I, T> {
     /// 
     /// * Nothing.
     /// 
-    pub fn new_tree(&mut self, name: &str) {
-        self.add_tree(name, Tree::new());
+    pub fn new_tree(&mut self, name: &str) -> Result<(), SocarelError> {
+        self.add_tree(name, Tree::new())
     }
 
-    //TODO: return Result
     /// Add a tree to forest.
     /// 
     /// # Arguments
@@ -141,10 +139,14 @@ impl<I: TreeIdentifier, T: NodeContent> Forest<I, T> {
     /// 
     /// * Nothing.
     /// 
-    pub fn add_tree(&mut self, name: &str, tree: Tree<T>) {
-        //TODO check if tree already exist, and fail
-        if let Some(tid) = I::new(name) {
+    pub fn add_tree(&mut self, name: &str, tree: Tree<T>) -> Result<(), SocarelError> {
+        let tid = I::new(name)?;
+        if !self.trees.contains_key(&tid) {
             self.trees.insert(tid, tree);
+            Ok(())
+        }
+        else {
+            Err(SocarelError::new("Tree ID already exist", 1, SocarelErrorType::Forest))
         }
     }
 
@@ -158,12 +160,13 @@ impl<I: TreeIdentifier, T: NodeContent> Forest<I, T> {
     /// 
     /// * An [`Option`] with the removed tree.
     /// 
-    pub fn remove_tree(&mut self, name: &str) -> Option<Tree<T>> {
-        if let Some(tid) = I::new(name) {
-            self.trees.remove(&tid)
+    pub fn remove_tree(&mut self, name: &str) -> Result<Tree<T>, SocarelError> {
+        let tid = I::new(name)?;
+        if let Some(t) = self.trees.remove(&tid) {
+            Ok(t)
         }
         else {
-            None
+            Err(SocarelError::new("Could not remove tree", 2, SocarelErrorType::Forest))
         }
     }
 
@@ -177,12 +180,13 @@ impl<I: TreeIdentifier, T: NodeContent> Forest<I, T> {
     /// 
     /// * An [`Option`] with the tree reference.
     /// 
-    pub fn get_tree(&self, name: &str) -> Option<&Tree<T>> {
-        if let Some(tid) = I::new(name) {
-            self.trees.get(&tid)
+    pub fn get_tree(&self, name: &str) -> Result<&Tree<T>, SocarelError> {
+        let tid = I::new(name)?;
+        if let Some(t) = self.trees.get(&tid) {
+            Ok(t)
         }
         else {
-            None
+            Err(SocarelError::new("Could not get tree", 3, SocarelErrorType::Forest))
         }
     }
 
@@ -196,12 +200,13 @@ impl<I: TreeIdentifier, T: NodeContent> Forest<I, T> {
     /// 
     /// * An [`Option`] with the mut tree reference.
     /// 
-    pub fn get_mut_tree(&mut self, name: &str) -> Option<&mut Tree<T>> {
-        if let Some(tid) = I::new(name) {
-            self.trees.get_mut(&tid)
+    pub fn get_mut_tree(&mut self, name: &str) -> Result<&mut Tree<T>, SocarelError> {
+        let tid = I::new(name)?;
+        if let Some(t) = self.trees.get_mut(&tid) {
+            Ok(t)
         }
         else {
-            None
+            Err(SocarelError::new("Could not get mutable tree", 4, SocarelErrorType::Forest))
         }
     }
 

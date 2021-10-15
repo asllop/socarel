@@ -196,6 +196,21 @@ impl<'a, T: NodeContent> IterInterface<'a, T> {
             InDfsIter::new(self.tree, 0)
         }
     }
+
+    /// Get Inverse In-Order DFS iterator
+    /// 
+    /// # Return
+    /// 
+    /// * Iterator.
+    ///
+    pub fn inv_in_dfs(&self) -> InvInDfsIter<'a, T> {
+        if let Some(initial_node) = self.initial_node {
+            InvInDfsIter::new(self.tree, initial_node)
+        }
+        else {
+            InvInDfsIter::new(self.tree, 0)
+        }
+    }
 }
 
 /// Simple Iterator, in sequential order.
@@ -640,9 +655,11 @@ impl<'a, T: NodeContent> InDfsIter<'a, T> {
             }
             else {
                 if child == 0 {
+                    // Is a node without any child, we have to visit it
                     return Some((node, child));
                 }
                 else if child == 1 {
+                    // Is a node with only one child, we have to visit it
                     return Some((node, child));
                 }
             }
@@ -685,6 +702,29 @@ impl<'a, T: NodeContent> Iterator for InDfsIter<'a, T> {
     }
 }
 
+//TODO
+/// Inverse In-Order DFS Iterator.
+pub struct InvInDfsIter<'a, T: NodeContent> {
+    _tree: &'a Tree<T>,
+    // (Node, Next children to visit)
+    _pila: Vec<(usize, i64)>
+}
 
-//TODO: config the in-order strategy for not binary trees: group last or group first.
+impl<'a, T: NodeContent> InvInDfsIter<'a, T> {
+    pub fn new(tree: &'a Tree<T>, initial_node: usize) -> Self {
+        let num_children = tree.get_nodes_ref()[initial_node].get_num_children() as i64;
+        Self {
+            _tree: tree,
+            _pila: vec!((initial_node, num_children - 1))
+        }
+    }
+}
+
+impl<'a, T: NodeContent> Iterator for InvInDfsIter<'a, T> {
+    type Item = (&'a Node<T>, usize);
+    fn next(&mut self) -> Option<Self::Item> {
+        None
+    }
+}
+
 //TODO: define an additional in-order algorithm for n-ary trees: visit the middle for each pair, so we can visit one node more than once.

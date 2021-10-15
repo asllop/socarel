@@ -1,6 +1,7 @@
 use crate::forest::*;
 use crate::tree::*;
 use crate::node::*;
+use crate::error::*;
 
 fn forest_sample() -> Forest {
     let mut forest = <Forest>::new();
@@ -12,14 +13,14 @@ fn forest_sample() -> Forest {
     let _child_2_1_1 = tree.link_node("child_2_1_1", _child_2_1).unwrap();
     let _child_2_2 = tree.link_node("child_2_2", _child_2).unwrap();
     let _child_2 = tree.link_node("child_3", _root).unwrap();
-    forest.add_tree("test_tree", tree);
+    forest.add_tree("test_tree", tree).unwrap();
     forest
 }
 
 #[test]
 fn check_tree_integrity() {
     let forest = forest_sample();
-    if let Some(tree) = forest.get_tree("test_tree") {
+    if let Ok(tree) = forest.get_tree("test_tree") {
         for (i, (n, _)) in tree.iterators().sequential().enumerate() {
             match i {
                 0 => {
@@ -147,19 +148,19 @@ fn check_custom_node_content() {
     }
 
     impl NodeContent for WeightNode {
-        fn new(content: &str) -> Option<Self> {
+        fn new(content: &str) -> Result<Self, SocarelError> {
             let vec: Vec<&str> = content.split(':').collect();
             if vec.len() == 2 {
                 match vec[0].trim().parse() {
-                    Ok(num) => Some(Self {
+                    Ok(num) => Ok(Self {
                         content: String::from(vec[1]),
                         weight: num
                     }),
-                    Err(_) => None
+                    Err(_) => Err(SocarelError::new("Error parsing node, weight not a number", -1, SocarelErrorType::Node))
                 }
             }
             else {
-                None
+                Err(SocarelError::new("Error parsing node, wrong format", -2, SocarelErrorType::Node))
             }
         }
 
@@ -179,8 +180,8 @@ fn check_custom_node_content() {
     let _child_1_1_1 = tree.link_node("12:child_1_1_1", _child_1_1).unwrap();
 
     let mut forest = Forest::<RawTreeId, _>::new();
-    forest.add_tree("custom_node_tree", tree);
-    forest.new_tree("empty_tree");
+    forest.add_tree("custom_node_tree", tree).unwrap();
+    forest.new_tree("empty_tree").unwrap();
 
     for (ti, (tree_id, tree)) in forest.iter().enumerate() {
 
