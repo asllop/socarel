@@ -29,7 +29,7 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the root node index (always 0).
+    /// * Root node index (always 0).
     ///
     pub fn set_root(&mut self, node_content: &str) -> Result<usize, SocarelError> {
         let node = Node::<T>::new_root(node_content)?;
@@ -50,7 +50,7 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the new node index.
+    /// * Node index.
     ///
     pub fn link_node(&mut self, node_content: &str, parent_node_index: usize) -> Result<usize, SocarelError> {
         if parent_node_index < self.nodes.len() {
@@ -81,7 +81,7 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the node index.
+    /// * Node index.
     ///
     pub fn unlink_node(&mut self, node_index: usize) -> Result<usize, SocarelError> {
         if self.nodes.len() > node_index {
@@ -107,7 +107,7 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the node index.
+    /// * Node index.
     ///
     pub fn update_node(&mut self, node_content: &str, node_index: usize) -> Result<usize, SocarelError> {
         if self.nodes.len() > node_index {
@@ -133,7 +133,7 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the node content reference.
+    /// * Node content reference.
     /// 
     pub fn get_node_content(&self, node_index: usize) -> Option<&T> {
         if node_index < self.nodes.len() {
@@ -155,7 +155,7 @@ impl<T: NodeContent> Tree<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the node index.
+    /// * Node index.
     ///
     pub fn find_path(&self, initial_node: usize, path: &[&str]) -> Option<usize> {
         let mut node_index = initial_node;

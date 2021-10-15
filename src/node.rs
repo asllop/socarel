@@ -257,7 +257,7 @@ impl<T: NodeContent> Node<T> {
         self.child_map.remove(node_content);
         self.children[node_index] = usize::MAX;
     }
-    
+
     /// Update child map.
     /// 
     /// # Arguments
@@ -267,7 +267,7 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the node index.
+    /// * Node index.
     ///
     pub fn update_child(&mut self, node_content: &str, new_node_content: &str) -> Result<usize, SocarelError> {
         if let Some(node_index) = self.child_map.remove(node_content) {
@@ -285,7 +285,7 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the node index.
+    /// * Node index.
     ///
     pub fn get_child(&self, node_content: &str) -> Option<usize> {
         if let Some(node_index) = self.child_map.get(node_content) {

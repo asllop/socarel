@@ -52,7 +52,7 @@ pub trait TreeIdentifier: std::cmp::Eq + std::hash::Hash {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the tree ID.
+    /// * Tree ID.
     /// 
     fn new(tree_id: &str) -> Result<Self, SocarelError> where Self: Sized;
     
@@ -158,7 +158,7 @@ impl<I: TreeIdentifier, T: NodeContent> Forest<I, T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the removed tree.
+    /// * Removed tree.
     /// 
     pub fn remove_tree(&mut self, name: &str) -> Result<Tree<T>, SocarelError> {
         let tid = I::new(name)?;
@@ -178,7 +178,7 @@ impl<I: TreeIdentifier, T: NodeContent> Forest<I, T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the tree reference.
+    /// * Tree reference.
     /// 
     pub fn get_tree(&self, name: &str) -> Result<&Tree<T>, SocarelError> {
         let tid = I::new(name)?;
@@ -198,7 +198,7 @@ impl<I: TreeIdentifier, T: NodeContent> Forest<I, T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the mut tree reference.
+    /// * Mut tree reference.
     /// 
     pub fn get_mut_tree(&mut self, name: &str) -> Result<&mut Tree<T>, SocarelError> {
         let tid = I::new(name)?;
