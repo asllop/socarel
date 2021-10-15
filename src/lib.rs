@@ -2,9 +2,11 @@
 //! 
 //! `Socarel` is a library to generate, manipulate and traverse trees.
 //! 
-//! It provides iterators for **eight** different traversal algorithms.<br>
-//! Add and remove nodes in **O(1)** complexity. Find nodes in a path in **O(p)** complexity (*p* being the path lenght).<br>
-//! Supports **custom node** models to create complex tree formats.<br>
+//! Main features:<br>
+//! - Iterators for **ten** different traversal algorithms.<br>
+//! - Add and remove nodes in **O(1)** complexity.<br>
+//! - Find nodes in a path in **O(p)** complexity (*p* being the path lenght).<br>
+//! - **Custom node** models to create complex tree formats.<br>
 //! 
 //! # Examples
 //! 

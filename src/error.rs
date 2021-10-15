@@ -41,9 +41,9 @@ impl SocarelError {
     /// 
     /// # Arguments
     /// 
-    /// * `msg` - Error message.
-    /// * `code` - Error code.
-    /// * `type` - Error type.
+    /// * `err_msg` - Error message.
+    /// * `err_code` - Error code.
+    /// * `err_type` - Error type.
     /// 
     /// # Return
     /// 
