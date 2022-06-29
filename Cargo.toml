@@ -6,6 +6,7 @@ edition = "2018"
 description = "Fast and compact crate to generate, manipulate and traverse trees."
 license = "MIT"
 repository = "https://github.com/asllop/socarel"
+keywords = ["tree", "traverse", "dfs", "bfs"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
