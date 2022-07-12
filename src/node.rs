@@ -1,4 +1,5 @@
 use std::collections::HashMap as Map;
+use crate::error::*;
 
 //---- Structs ----//
 
@@ -14,7 +15,7 @@ pub trait NodeContent {
     /// 
     /// * An [`Option`] with the node content.
     /// 
-    fn new(content: &str) -> Option<Self> where Self: Sized;
+    fn new(content: &str) -> Result<Self, SocarelError> where Self: Sized;
     
     /// Get node value.
     /// 
@@ -32,33 +33,24 @@ pub trait NodeContent {
     /// 
     /// * Node content.
     ///
-    fn gen_content(&self) -> String;
+    fn gen_content(&self) -> String {
+        String::from(self.get_val())
+    }
 }
 
 /// Default [`NodeContent`] struct.
 /// 
 /// It simply holds the content as is, without parsing or modifying it.
 #[derive(Debug)]
-pub struct RawNode {
-    /// Node content.
-    content: String
-}
+pub struct RawNode(String);
 
 impl NodeContent for RawNode {
-    fn new(content: &str) -> Option<Self> {
-        Some(
-            Self {
-                content: String::from(content)
-            }
-        )
+    fn new(content: &str) -> Result<Self, SocarelError> {
+        Ok(Self(String::from(content)))
     }
 
     fn get_val(&self) -> &str {
-        &self.content
-    }
-
-    fn gen_content(&self) -> String {
-        String::from(self.get_val())
+        &self.0
     }
 }
 
@@ -75,7 +67,7 @@ pub struct Node<T: NodeContent = RawNode> {
     child_map: Map<String, usize>,
     /// Index of current node in the parent [`children`][`Node::children`] array.
     parents_children_pos: Option<usize>,
-    /// Array that contains indexes of of children nodes.
+    /// Array that contains indexes of children nodes.
     children: Vec<usize>
 }
 
@@ -90,9 +82,9 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// # Return
     /// 
-    /// * Node struct or None if content parsing fails.
+    /// * Node struct.
     /// 
-    pub fn new_root(content: &str) -> Option<Self> {
+    pub fn new_root(content: &str) -> Result<Self, SocarelError> {
         Self::new_node(content, 1)
     }
 
@@ -105,24 +97,20 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// # Return
     /// 
-    /// * Node struct or None if content parsing fails.
+    /// * Node struct.
     /// 
-    pub fn new_node(content: &str, level: usize) -> Option<Self> {
-        if let Some(content_node) = NodeContent::new(content) {
-            Some(
-                Node {
-                    content: content_node,
-                    level,
-                    parent_position: None,
-                    child_map: Map::new(),
-                    parents_children_pos: None,
-                    children: vec!()
-                }
-            )
-        }
-        else {
-            None
-        }
+    pub fn new_node(content: &str, level: usize) -> Result<Self, SocarelError> {
+        let content_node = NodeContent::new(content)?;
+        Ok(
+            Node {
+                content: content_node,
+                level,
+                parent_position: None,
+                child_map: Map::new(),
+                parents_children_pos: None,
+                children: vec!()
+            }
+        )
     }
 
     /// Set content.
@@ -189,7 +177,7 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// * Number of children.
     ///
-    pub fn get_num_chuildren(&self) -> usize {
+    pub fn get_num_children(&self) -> usize {
         self.children.len()
     }
 
@@ -279,14 +267,14 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the node index.
+    /// * Node index.
     ///
-    pub fn update_child(&mut self, node_content: &str, new_node_content: &str) -> Option<usize> {
+    pub fn update_child(&mut self, node_content: &str, new_node_content: &str) -> Result<usize, SocarelError> {
         if let Some(node_index) = self.child_map.remove(node_content) {
             self.child_map.insert(String::from(new_node_content), node_index);
-            return Some(node_index);
+            return Ok(node_index);
         }
-        None
+        Err(SocarelError::new("Could not update child", 1, SocarelErrorType::Node))
     }
 
     /// Get child index using node content.
@@ -297,7 +285,7 @@ impl<T: NodeContent> Node<T> {
     /// 
     /// # Return
     /// 
-    /// * An [`Option`] with the node index.
+    /// * Node index.
     ///
     pub fn get_child(&self, node_content: &str) -> Option<usize> {
         if let Some(node_index) = self.child_map.get(node_content) {

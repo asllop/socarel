@@ -1,13 +1,13 @@
-use socarel::{Forest, NodeContent, Node};
+use socarel::{Forest, Tree, Node, NodeContent, TreeIdentifier};
 
 fn main() {
     let mut forest = <Forest>::new();
-    forest.new_tree("my_tree");
-    forest.new_tree("other_tree");
+    forest.new_tree("my_tree").unwrap();
+    forest.new_tree("other_tree").unwrap();
 
     println!("Forest = {:#?}", forest);
 
-    if let Some(my_tree) = forest.get_mut_tree("my_tree") {
+    if let Ok(my_tree) = forest.get_mut_tree("my_tree") {
         let _root = my_tree.set_root("my root node").unwrap();
         let _child_1 = my_tree.link_node("bad child node 1", _root).unwrap();
         let _child_2 = my_tree.link_node("child node 2", _root).unwrap();
@@ -22,7 +22,7 @@ fn main() {
 
         println!("-------------------------------------------------------");
 
-        my_tree.update_node("child node 1", _child_1);
+        my_tree.update_node("child node 1", _child_1).unwrap();
 
         println!("New Child 1 content = {:#?}", my_tree.get_node_content(_child_1).unwrap().get_val());
 
@@ -30,47 +30,101 @@ fn main() {
 
         println!("-------------------------------------------------------");
 
-        my_tree.unlink_node(_child_1);
+        my_tree.unlink_node(_child_1).unwrap();
 
         println!("My Tree after unlink = {:#?}", my_tree);
 
         println!("-------------------------------------------------------");
 
         // Is the unlinked node, will return None
-        let _found_node_a = my_tree.find_node(&["my root node", "child node 1", "grandchild 1 node"]);
+        let _found_node_a = my_tree.find_path(0, &["child node 1", "grandchild 1 node"]);
         println!("find '/my root node/child node 1/grandchild 1 node/' index = {:#?}", _found_node_a);
 
-        let _found_node_b = my_tree.find_node(&["my root node", "child node 2", "grandchild 2 node"]);
+        let _found_node_b = my_tree.find_path(0, &["child node 2", "grandchild 2 node"]);
         println!("find '/my root node/child node 2/grandchild 2 node/' index = {:#?}", _found_node_b);
 
-        let _found_root = my_tree.find_node(&["my root node"]);
+        let _found_root = my_tree.find_path(0, &[]);
         println!("find '/my root node/' index = {:#?}", _found_root);
-
-        println!("-------------------------------------------------------");
-
-        println!("Sequential Iter:");
-        iterate(my_tree.iterators().sequential());
-        println!("Inv Sequential Iter:");
-        iterate(my_tree.iterators().inv_sequential());
-        println!("BFS Iter:");
-        iterate(my_tree.iterators().bfs());
-        println!("Inv BFS Iter:");
-        iterate(my_tree.iterators().inv_bfs());
-        println!("Pre DFS Iter:");
-        iterate(my_tree.iterators().pre_dfs());
-        println!("Inv Pre DFS Iter:");
-        iterate(my_tree.iterators().inv_pre_dfs());
-        println!("Post DFS Iter:");
-        iterate(my_tree.iterators().post_dfs());
-        println!("Inv Post DFS Iter:");
-        iterate(my_tree.iterators().inv_post_dfs());
     }
 
     println!("-------------------------------------------------------");
     println!("All trees:");
     for (k,v) in forest.iter() {
-        println!("Tree name `{}` tree = {:#?}", k, v);
+        println!("Tree name `{}` tree = {:#?}", k.get_id(), v);
     }
+
+    println!("-------------------------------------------------------");
+
+    let mut tree = <Tree>::new();
+    let _a = tree.set_root("A").unwrap();
+    let _b = tree.link_node("B", _a).unwrap();
+    let _c = tree.link_node("C", _a).unwrap();
+    let _d = tree.link_node("D", _b).unwrap();
+    let _e = tree.link_node("E", _b).unwrap();
+    let _f = tree.link_node("F", _c).unwrap();
+    let _g = tree.link_node("G", _c).unwrap();
+    let _h = tree.link_node("H", _e).unwrap();
+
+    println!("--- Sequential Iter:");
+    iterate(tree.iterators().sequential());
+    println!("--- Inv Sequential Iter:");
+    iterate(tree.iterators().inv_sequential());
+    println!("--- BFS Iter:");
+    iterate(tree.iterators().bfs());
+    println!("--- Inv BFS Iter:");
+    iterate(tree.iterators().inv_bfs());
+    println!("--- Pre DFS Iter:");
+    iterate(tree.iterators().pre_dfs());
+    println!("--- Inv Pre DFS Iter:");
+    iterate(tree.iterators().inv_pre_dfs());
+    println!("--- Post DFS Iter:");
+    iterate(tree.iterators().post_dfs());
+    println!("--- Inv Post DFS Iter:");
+    iterate(tree.iterators().inv_post_dfs());
+    println!("--- Children Iter:");
+    iterate(tree.iterators().children());
+    println!("--- In-Order DFS Iter:");
+    iterate(tree.iterators().in_dfs());
+
+    println!("\nIters from node B:\n");
+
+    println!("--- Sequential Iter:");
+    iterate(tree.iterators_at(_b).sequential());
+    println!("--- Inv Sequential Iter:");
+    iterate(tree.iterators_at(_b).inv_sequential());
+    println!("--- BFS Iter:");
+    iterate(tree.iterators_at(_b).bfs());
+    println!("--- Inv BFS Iter:");
+    iterate(tree.iterators_at(_b).inv_bfs());
+    println!("--- Pre DFS Iter:");
+    iterate(tree.iterators_at(_b).pre_dfs());
+    println!("--- Inv Pre DFS Iter:");
+    iterate(tree.iterators_at(_b).inv_pre_dfs());
+    println!("--- Post DFS Iter:");
+    iterate(tree.iterators_at(_b).post_dfs());
+    println!("--- Inv Post DFS Iter:");
+    iterate(tree.iterators_at(_b).inv_post_dfs());
+    println!("--- Children Iter:");
+    iterate(tree.iterators_at(_b).children());
+
+    println!("-------------------------------------------------------");
+
+    let mut tree = <Tree>::new();
+    let _a = tree.set_root("A").unwrap();
+    let _b = tree.link_node("B", _a).unwrap();
+    let _c = tree.link_node("C", _a).unwrap();
+    let _d = tree.link_node("D", _a).unwrap();
+    let _e = tree.link_node("E", _b).unwrap();
+    let _f = tree.link_node("F", _b).unwrap();
+    let _g = tree.link_node("G", _b).unwrap();
+    let _h = tree.link_node("H", _c).unwrap();
+    let _i = tree.link_node("I", _c).unwrap();
+    let _j = tree.link_node("J", _d).unwrap();
+
+    println!("--- In-Order DFS Iter:");
+    iterate(tree.iterators().in_dfs());
+    println!("--- Inverse In-Order DFS Iter:");
+    iterate(tree.iterators().inv_in_dfs());
 }
 
 fn iterate<'a>(iter: impl Iterator<Item=(&'a Node, usize)>) {

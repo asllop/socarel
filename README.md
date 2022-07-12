@@ -2,7 +2,7 @@
 
 Rust crate to generate, manipulate and traverse trees.<br><br>
 It provides iterators for **eight** different traversal algorithms.<br>
-Add and remove nodes in **O(1)** complexity. Find nodes in a path in **O(p)** complexity (being *p* the path lenght).<br>
+Add and remove nodes in **O(1)** complexity. Find nodes in a path in **O(p)** complexity (*p* being the path lenght).<br>
 Supports **custom node** models to create complex tree formats.<br>
 
 ## Usage & Docs
@@ -12,6 +12,8 @@ As with any crate, generate the docs using cargo:
  ```bash
  cargo doc --open
  ```
+
+Or visit [docs.rs](https://docs.rs/socarel)
 
 ## Crate
 

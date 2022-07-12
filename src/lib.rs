@@ -2,9 +2,11 @@
 //! 
 //! `Socarel` is a library to generate, manipulate and traverse trees.
 //! 
-//! It provides iterators for **eight** different traversal algorithms.<br>
-//! Add and remove nodes in **O(1)** complexity. Find nodes in a path in **O(p)** complexity (being *p* the path lenght).<br>
-//! Supports **custom node** models to create complex tree formats.<br>
+//! Main features:<br>
+//! - Iterators for **ten** different traversal algorithms.<br>
+//! - Add and remove nodes in **O(1)** complexity.<br>
+//! - Find nodes in a path in **O(p)** complexity (*p* being the path lenght).<br>
+//! - **Custom node** models to create complex tree formats.<br>
 //! 
 //! # Examples
 //! 
@@ -114,10 +116,10 @@
 //! # let _root_node = tree.set_root("root_node").unwrap();
 //! # let _child_1 = tree.link_node("child_1", _root_node).unwrap();
 //! # let _child_1_1 = tree.link_node("child_1_1", _child_1).unwrap();
-//! let _node = tree.find_node(&["root_node", "child_1", "child_1_1"]).unwrap();
+//! let _node = tree.find_path(_root_node, &["child_1", "child_1_1"]).unwrap();
 //! ```
 //! 
-//! Using [`Tree::find_node()`] is always better when possible, because the complexity is O(p) (*p* = path length) while the complexity of most traversal algorithms is O(n) (*n* = number of nodes in the tree).
+//! Using [`Tree::find_path()`] is always better when possible, because the complexity is O(p) (*p* = path length) while the complexity of most traversal algorithms is O(n) (*n* = number of nodes in the tree).
 //! 
 //! ## Custom Nodes
 //! 
@@ -161,19 +163,19 @@
 //! 
 //! impl NodeContent for WeightNode {
 //!     // We parse the node content and return None if not a valid format
-//!     fn new(content: &str) -> Option<Self> {
+//!     fn new(content: &str) -> Result<Self, SocarelError> {
 //!         let vec: Vec<&str> = content.split(':').collect();
 //!         if vec.len() == 2 {
 //!             match vec[0].trim().parse() {
-//!                 Ok(num) => Some(Self {
+//!                 Ok(num) => Ok(Self {
 //!                     content: String::from(vec[1]),
 //!                     weight: num
 //!                 }),
-//!                 Err(_) => None
+//!                 Err(_) => Err(SocarelError::new("Error parsing node, weight not a number", -1, SocarelErrorType::Node))
 //!             }
 //!         }
 //!         else {
-//!             None
+//!             Err(SocarelError::new("Error parsing node, wrong format", -2, SocarelErrorType::Node))
 //!         }
 //!     }
 //! 
@@ -201,19 +203,19 @@
 //! #     }
 //! # }
 //! # impl NodeContent for WeightNode {
-//! #     fn new(content: &str) -> Option<Self> {
+//! #     fn new(content: &str) -> Result<Self, SocarelError> {
 //! #         let vec: Vec<&str> = content.split(':').collect();
 //! #         if vec.len() == 2 {
 //! #             match vec[0].trim().parse() {
-//! #                 Ok(num) => Some(Self {
+//! #                 Ok(num) => Ok(Self {
 //! #                     content: String::from(vec[1]),
 //! #                     weight: num
 //! #                 }),
-//! #                 Err(_) => None
+//! #                 Err(_) => Err(SocarelError::new("", 0, SocarelErrorType::Other))
 //! #             }
 //! #         }
 //! #         else {
-//! #             None
+//! #             Err(SocarelError::new("", 0, SocarelErrorType::Other))
 //! #         }
 //! #     }
 //! #     fn get_val(&self) -> &str {
@@ -231,17 +233,30 @@
 //!     let cref = node.get_content_ref();
 //!     println!("Node content = `{}` weight = {}", cref.get_val(), cref.get_weight());
 //! }
+//! 
+//! // Add tree to a Forest, this time we have to specify the types
+//! let mut forest = Forest::<RawTreeId, _>::new();
+//! forest.add_tree("weight_tree", tree);
 //! ```
+//! 
+//! Note that in this case, [`NodeContent::get_val()`] is not returning the same value passed to [`NodeContent::new()`]. If you are used to the default node content, [`RawNode`], you could have thought that it is always the same, but it is not, it depends on the specific [`NodeContent`] implementation you have in your tree.<br>
+//! And that's the ultimate reason why we have [`NodeContent::gen_content()`], to be able to generate the original content passed to `new`.
 
 mod node;
-mod tree;
-mod forest;
-mod iter;
-
 pub use node::*;
+
+mod tree;
 pub use tree::*;
+
+#[macro_use]
+mod forest;
 pub use forest::*;
+
+mod iter;
 pub use iter::*;
+
+mod error;
+pub use error::*;
 
 #[cfg(test)]
 mod tests;
